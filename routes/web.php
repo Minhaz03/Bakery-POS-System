@@ -1,31 +1,32 @@
 <?php
 
 use App\Http\Controllers\Admin\ModuleController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PosController;
-use App\Http\Controllers\StockLedgerController;
-use App\Http\Controllers\ProductionController;
-use App\Http\Controllers\CustomOrderController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AnalyticsController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\UnitController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomOrderController;
+use App\Http\Controllers\PosController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
-use App\Http\Controllers\SaleController;
 use App\Http\Controllers\RecipeController;
-use App\Http\Controllers\ProductionBatchController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\StockLedgerController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
     }
+
     return view('welcome');
 })->name('home');
 
@@ -35,11 +36,11 @@ Route::get('/dashboard', function () {
 
 // Dashboard Subpages
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
-    Route::patch('Products/{product}/toggle-stock', [ProductController::class, 'toggleStock'])->name('products.toggle-stock');
-    
+    Route::patch('products/{product}/toggle-stock', [ProductController::class, 'toggleStock'])->name('products.toggle-stock');
+
     // CRUD Resources with custom route names matching the UI sidebar
-    Route::resource('Products', ProductController::class)->parameters([
-        'Products' => 'product'
+    Route::resource('products', ProductController::class)->parameters([
+        'products' => 'product',
     ])->names([
         'index' => 'products',
         'create' => 'products.create',
@@ -49,9 +50,9 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         'update' => 'products.update',
         'destroy' => 'products.destroy',
     ]);
-    
-    Route::resource('Categories', CategoryController::class)->parameters([
-        'Categories' => 'category'
+
+    Route::resource('categories', CategoryController::class)->parameters([
+        'categories' => 'category',
     ])->names([
         'index' => 'categories',
         'create' => 'categories.create',
@@ -62,8 +63,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         'destroy' => 'categories.destroy',
     ]);
 
-    Route::resource('Suppliers', SupplierController::class)->parameters([
-        'Suppliers' => 'supplier'
+    Route::resource('suppliers', SupplierController::class)->parameters([
+        'suppliers' => 'supplier',
     ])->names([
         'index' => 'suppliers',
         'create' => 'suppliers.create',
@@ -74,8 +75,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         'destroy' => 'suppliers.destroy',
     ]);
 
-    Route::resource('Customers', CustomerController::class)->parameters([
-        'Customers' => 'customer'
+    Route::resource('customers', CustomerController::class)->parameters([
+        'customers' => 'customer',
     ])->names([
         'index' => 'customers',
         'create' => 'customers.create',
@@ -86,8 +87,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         'destroy' => 'customers.destroy',
     ]);
 
-    Route::resource('Units', UnitController::class)->parameters([
-        'Units' => 'unit'
+    Route::resource('units', UnitController::class)->parameters([
+        'units' => 'unit',
     ])->names([
         'index' => 'units',
         'create' => 'units.create',
@@ -98,8 +99,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         'destroy' => 'units.destroy',
     ]);
 
-    Route::resource('Brands', BrandController::class)->parameters([
-        'Brands' => 'brand'
+    Route::resource('brands', BrandController::class)->parameters([
+        'brands' => 'brand',
     ])->names([
         'index' => 'brands',
         'create' => 'brands.create',
@@ -110,12 +111,12 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         'destroy' => 'brands.destroy',
     ]);
 
-    Route::get('/Stock-Ledger', [StockLedgerController::class, 'stockLedger'])->name('stock-ledger');
-    Route::post('/Stock-Ledger/adjust', [StockLedgerController::class, 'adjustStock'])->name('stock-ledger.adjust');
-    Route::get('/Stock-Ledger/export', [StockLedgerController::class, 'exportExcel'])->name('stock-ledger.export');
-    Route::post('Purchases/{purchase}/receive', [PurchaseController::class, 'receive'])->name('purchases.receive');
-    Route::resource('Purchases', PurchaseController::class)->parameters([
-        'Purchases' => 'purchase'
+    Route::get('/stock-ledger', [StockLedgerController::class, 'stockLedger'])->name('stock-ledger');
+    Route::post('/stock-ledger/adjust', [StockLedgerController::class, 'adjustStock'])->name('stock-ledger.adjust');
+    Route::get('/stock-ledger/export', [StockLedgerController::class, 'exportExcel'])->name('stock-ledger.export');
+    Route::post('purchases/{purchase}/receive', [PurchaseController::class, 'receive'])->name('purchases.receive');
+    Route::resource('purchases', PurchaseController::class)->parameters([
+        'purchases' => 'purchase',
     ])->names([
         'index' => 'purchases',
         'create' => 'purchases.create',
@@ -125,49 +126,49 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         'update' => 'purchases.update',
         'destroy' => 'purchases.destroy',
     ]);
-    Route::get('/POS-Terminal', [PosController::class, 'posTerminal'])->name('pos-terminal');
-    Route::post('/POS-Terminal/checkout', [PosController::class, 'checkout'])->name('pos-terminal.checkout');
-    Route::get('Sales/{sale}/print', [SaleController::class, 'print'])->name('sales.print');
-    Route::resource('Sales', SaleController::class)->parameters(['Sales' => 'sale'])->except(['create', 'store'])->names([
-        'index'   => 'sales',
-        'show'    => 'sales.show',
-        'edit'    => 'sales.edit',
-        'update'  => 'sales.update',
+    Route::get('/pos-terminal', [PosController::class, 'posTerminal'])->name('pos-terminal');
+    Route::post('/pos-terminal/checkout', [PosController::class, 'checkout'])->name('pos-terminal.checkout');
+    Route::get('sales/{sale}/print', [SaleController::class, 'print'])->name('sales.print');
+    Route::resource('sales', SaleController::class)->parameters(['sales' => 'sale'])->except(['create', 'store'])->names([
+        'index' => 'sales',
+        'show' => 'sales.show',
+        'edit' => 'sales.edit',
+        'update' => 'sales.update',
         'destroy' => 'sales.destroy',
     ]);
-    Route::resource('Recipes', RecipeController::class)->parameters([
-        'Recipes' => 'recipe'
+    Route::resource('recipes', RecipeController::class)->parameters([
+        'recipes' => 'recipe',
     ])->names([
-        'index'   => 'recipes',
-        'create'  => 'recipes.create',
-        'store'   => 'recipes.store',
-        'show'    => 'recipes.show',
-        'edit'    => 'recipes.edit',
-        'update'  => 'recipes.update',
+        'index' => 'recipes',
+        'create' => 'recipes.create',
+        'store' => 'recipes.store',
+        'show' => 'recipes.show',
+        'edit' => 'recipes.edit',
+        'update' => 'recipes.update',
         'destroy' => 'recipes.destroy',
     ]);
-    Route::get('/Production', [ProductionController::class, 'production'])->name('production');
-    Route::get('/Production/{batch}', [ProductionController::class, 'show'])->name('production.show');
-    Route::post('/Production', [ProductionController::class, 'store'])->name('production.store');
-    Route::patch('/Production/{batch}/complete', [ProductionController::class, 'complete'])->name('production.complete');
-    Route::patch('/Production/{batch}/cancel', [ProductionController::class, 'cancel'])->name('production.cancel');
-    Route::get('/Custom-Orders', [CustomOrderController::class, 'customOrders'])->name('custom-orders');
-    Route::post('/Custom-Orders', [CustomOrderController::class, 'store'])->name('custom-orders.store');
-    Route::get('/Custom-Orders/{order}', [CustomOrderController::class, 'show'])->name('custom-orders.show');
-    Route::get('/Custom-Orders/{order}/print', [CustomOrderController::class, 'print'])->name('custom-orders.print');
-    Route::patch('/Custom-Orders/{order}/cancel', [CustomOrderController::class, 'cancel'])->name('custom-orders.cancel');
-    Route::patch('/Custom-Orders/{order}/status', [CustomOrderController::class, 'updateStatus'])->name('custom-orders.status');
-    Route::post('/Custom-Orders/{order}/payment', [CustomOrderController::class, 'addPayment'])->name('custom-orders.payment');
-    Route::get('/Analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
-    
+    Route::get('/production', [ProductionController::class, 'production'])->name('production');
+    Route::get('/production/{batch}', [ProductionController::class, 'show'])->name('production.show');
+    Route::post('/production', [ProductionController::class, 'store'])->name('production.store');
+    Route::patch('/production/{batch}/complete', [ProductionController::class, 'complete'])->name('production.complete');
+    Route::patch('/production/{batch}/cancel', [ProductionController::class, 'cancel'])->name('production.cancel');
+    Route::get('/custom-orders', [CustomOrderController::class, 'customOrders'])->name('custom-orders');
+    Route::post('/custom-orders', [CustomOrderController::class, 'store'])->name('custom-orders.store');
+    Route::get('/custom-orders/{order}', [CustomOrderController::class, 'show'])->name('custom-orders.show');
+    Route::get('/custom-orders/{order}/print', [CustomOrderController::class, 'print'])->name('custom-orders.print');
+    Route::patch('/custom-orders/{order}/cancel', [CustomOrderController::class, 'cancel'])->name('custom-orders.cancel');
+    Route::patch('/custom-orders/{order}/status', [CustomOrderController::class, 'updateStatus'])->name('custom-orders.status');
+    Route::post('/custom-orders/{order}/payment', [CustomOrderController::class, 'addPayment'])->name('custom-orders.payment');
+    Route::get('/analytics', [AnalyticsController::class, 'analytics'])->name('analytics');
+
     // Reports
-    Route::prefix('Reports')->name('reports.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\ReportController::class, 'index'])->name('index');
-        Route::get('/sales', [\App\Http\Controllers\ReportController::class, 'salesReport'])->name('sales');
-        Route::get('/purchases', [\App\Http\Controllers\ReportController::class, 'purchasesReport'])->name('purchases');
-        Route::get('/stock', [\App\Http\Controllers\ReportController::class, 'stockReport'])->name('stock');
-        Route::get('/production', [\App\Http\Controllers\ReportController::class, 'productionReport'])->name('production');
-        Route::get('/profit-loss', [\App\Http\Controllers\ReportController::class, 'profitLossReport'])->name('profit-loss');
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('/sales', [ReportController::class, 'salesReport'])->name('sales');
+        Route::get('/purchases', [ReportController::class, 'purchasesReport'])->name('purchases');
+        Route::get('/stock', [ReportController::class, 'stockReport'])->name('stock');
+        Route::get('/production', [ReportController::class, 'productionReport'])->name('production');
+        Route::get('/profit-loss', [ReportController::class, 'profitLossReport'])->name('profit-loss');
     });
 });
 
@@ -191,18 +192,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     });
 
     // ── User Management ──
-    Route::get('/users',              [UserController::class, 'index'])->name('users.index');
-    Route::post('/users',             [UserController::class, 'store'])->name('users.store');
-    Route::put('/users/{user}',       [UserController::class, 'update'])->name('users.update');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::put('/users/{user}/roles', [UserController::class, 'assignRoles'])->name('users.assign-roles');
-    Route::delete('/users/{user}',    [UserController::class, 'destroy'])->name('users.destroy');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     // ── Roles & Permissions ──
-    Route::get('/roles',                          [RoleController::class, 'index'])->name('roles.index');
-    Route::post('/roles',                         [RoleController::class, 'store'])->name('roles.store');
-    Route::put('/roles/{role}',                   [RoleController::class, 'update'])->name('roles.update');
-    Route::put('/roles/{role}/permissions',       [RoleController::class, 'syncPermissions'])->name('roles.sync-permissions');
-    Route::delete('/roles/{role}',                [RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+    Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+    Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+    Route::put('/roles/{role}/permissions', [RoleController::class, 'syncPermissions'])->name('roles.sync-permissions');
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 });
 
 require __DIR__.'/auth.php';
