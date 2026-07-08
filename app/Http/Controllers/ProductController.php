@@ -63,6 +63,16 @@ class ProductController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $tenant = auth()->user()->tenant;
+        $activeSubscription = $tenant ? $tenant->activeSubscription() : null;
+        $limit = $activeSubscription ? $activeSubscription->plan->limit_products : 0;
+        
+        if (Product::count() >= $limit) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', "Your plan limit has been reached! You can only have up to {$limit} products. Please upgrade your plan.");
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|max:100|unique:products,sku',

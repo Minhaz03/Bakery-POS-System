@@ -90,8 +90,12 @@
                         <td style="padding:14px 20px;text-align:center;">
                             @if($sale->status === 'completed')
                                 <span style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;"><i class="bi bi-check-circle-fill"></i> Completed</span>
+                            @elseif($sale->status === 'partial')
+                                <span style="background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;"><i class="bi bi-exclamation-circle-fill"></i> Partially Paid</span>
+                            @elseif($sale->status === 'due')
+                                <span style="background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;"><i class="bi bi-x-circle-fill"></i> Due (Unpaid)</span>
                             @elseif($sale->status === 'refunded')
-                                <span style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;"><i class="bi bi-arrow-counterclockwise"></i> Refunded</span>
+                                <span style="background:#f1f5f9;color:#475569;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;"><i class="bi bi-arrow-counterclockwise"></i> Refunded</span>
                             @else
                                 <span style="background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;"><i class="bi bi-slash-circle"></i> Voided</span>
                             @endif

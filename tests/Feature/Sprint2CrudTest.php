@@ -26,6 +26,8 @@ test('authenticated user can perform unit operations', function () {
     $response = $this->actingAs($user)->post(route('dashboard.units.store'), [
         'name' => 'Testing Unit',
         'short_name' => 'tst',
+        'operator' => '*',
+        'conversion_rate' => 1,
     ]);
     $response->assertSessionHasNoErrors();
     $this->assertDatabaseHas('units', ['name' => 'Testing Unit', 'short_name' => 'tst']);
@@ -34,6 +36,8 @@ test('authenticated user can perform unit operations', function () {
     $response = $this->actingAs($user)->postJson(route('dashboard.units.store'), [
         'name' => 'Testing Unit 2',
         'short_name' => 'tst2',
+        'operator' => '*',
+        'conversion_rate' => 1,
     ]);
     $response->assertJsonPath('success', true);
     $this->assertDatabaseHas('units', ['name' => 'Testing Unit 2']);
@@ -230,6 +234,7 @@ test('authenticated user can perform product CRUD', function () {
         'is_pos_enabled' => '1',
         'is_bakery_item' => '1',
         'image' => $imageFile,
+        'product_type' => 'finished_product',
     ]);
     $response->assertSessionHasNoErrors();
     
@@ -253,6 +258,7 @@ test('authenticated user can perform product CRUD', function () {
         'reorder_qty' => 5,
         'is_active' => '1',
         'is_pos_enabled' => '1',
+        'product_type' => 'finished_product',
     ]);
     $response->assertSessionHasNoErrors();
     $this->assertDatabaseHas('products', [

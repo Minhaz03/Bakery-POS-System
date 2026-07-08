@@ -6,15 +6,20 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
+use App\Traits\BelongsToTenant;
+
 #[Fillable(['key', 'value', 'type', 'group'])]
 class Setting extends Model
 {
+    use BelongsToTenant;
+
     /**
      * Get a setting value by key.
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        $cached = Cache::rememberForever("sys_setting.{$key}", function () use ($key) {
+        $tenantId = auth()->check() ? auth()->user()->tenant_id : (session('tenant_id') ?? 1);
+        $cached = Cache::rememberForever("sys_setting.t{$tenantId}.{$key}", function () use ($key) {
             $setting = self::where('key', $key)->first();
             if (!$setting) {
                 return null;
@@ -25,7 +30,7 @@ class Setting extends Model
 
         // Guard: if the cache returned a corrupted/incomplete object, fetch fresh from DB
         if (!$cached || !is_array($cached)) {
-            Cache::forget("sys_setting.{$key}");
+            Cache::forget("sys_setting.t{$tenantId}.{$key}");
             $setting = self::where('key', $key)->first();
             if (!$setting) {
                 return $default;
@@ -53,7 +58,8 @@ class Setting extends Model
             ]
         );
 
-        Cache::forget("sys_setting.{$key}");
+        $tenantId = auth()->check() ? auth()->user()->tenant_id : (session('tenant_id') ?? 1);
+        Cache::forget("sys_setting.t{$tenantId}.{$key}");
         Cache::forget("all_settings");
 
         return $setting;

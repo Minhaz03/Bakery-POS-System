@@ -32,12 +32,12 @@
             <table style="width:100%;border-collapse:collapse;text-align:left;font-size:13.5px;">
                 <thead>
                     <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;">
-                        <th style="padding:16px 20px;">ID</th>
                         <th style="padding:16px 20px;">Customer Details</th>
                         <th style="padding:16px 20px;">Phone</th>
                         <th style="padding:16px 20px;">Email</th>
                         <th style="padding:16px 20px;text-align:center;">Loyalty Points</th>
                         <th style="padding:16px 20px;text-align:right;">Total Purchased</th>
+                        <th style="padding:16px 20px;text-align:right;">Due Balance</th>
                         <th style="padding:16px 20px;text-align:center;">Status</th>
                         <th style="padding:16px 20px;text-align:center;">Actions</th>
                     </tr>
@@ -45,9 +45,10 @@
                 <tbody style="color:#334155;">
                     @forelse($customers as $customer)
                     <tr style="border-bottom:1px solid #f1f5f9;transition:background 0.15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                        <td style="padding:14px 20px;font-weight:600;color:#64748b;">#CST-{{ sprintf('%03d', $customer->id) }}</td>
                         <td style="padding:14px 20px;font-weight:700;color:#0f172a;">
-                            {{ $customer->name }}
+                            <a href="{{ route('dashboard.customers.show', $customer) }}" style="color:#6366f1;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                {{ $customer->name }}
+                            </a>
                             @if($customer->date_of_birth)
                                 <small style="display:block;font-weight:400;color:#64748b;">DOB: {{ $customer->date_of_birth->format('d M, Y') }}</small>
                             @endif
@@ -72,6 +73,13 @@
                             </span>
                         </td>
                         <td style="padding:14px 20px;text-align:right;font-weight:700;color:#0f172a;">৳ {{ number_format($customer->total_spent, 2) }}</td>
+                        <td style="padding:14px 20px;text-align:right;font-weight:700;color:{{ $customer->due_balance > 0 ? '#ef4444' : '#64748b' }};">
+                            @if($customer->due_balance > 0)
+                                ৳ {{ number_format($customer->due_balance, 2) }}
+                            @else
+                                <span style="color:#94a3b8;">৳ 0.00</span>
+                            @endif
+                        </td>
                         <td style="padding:14px 20px;text-align:center;">
                             <span style="background:{{ $customer->is_active ? '#dcfce7' : '#f1f5f9' }};color:{{ $customer->is_active ? '#15803d' : '#475569' }};padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;">
                                 {{ $customer->is_active ? 'Active' : 'Inactive' }}
@@ -79,6 +87,7 @@
                         </td>
                         <td style="padding:14px 20px;text-align:center;font-size:16px;">
                             <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+                                <a href="{{ route('dashboard.customers.show', $customer) }}" style="color:#0ea5e9;" title="View Details"><i class="bi bi-eye"></i></a>
                                 <a href="{{ route('dashboard.customers.edit', $customer) }}" style="color:#6366f1;" title="Edit Customer"><i class="bi bi-pencil-square"></i></a>
                                 @if($customer->phone !== '0000000000')
                                     <form method="POST" action="{{ route('dashboard.customers.destroy', $customer) }}" onsubmit="return confirm('Are you sure you want to delete this customer?')" style="margin:0;display:inline;">

@@ -23,7 +23,14 @@ class CustomerController extends Controller
             });
         }
 
-        $customers = $query->orderBy('name')->paginate(15);
+        $customers = $query->addSelect([
+            'due_balance' => \App\Models\Sale::selectRaw('COALESCE(SUM(grand_total - amount_tendered), 0)')
+                ->whereColumn('customer_id', 'customers.id')
+                ->whereIn('status', ['partial', 'due'])
+        ])
+        ->orderBy('name')
+        ->paginate(15);
+
         return view('dashboard.customers.index', compact('customers'));
     }
 
@@ -96,5 +103,25 @@ class CustomerController extends Controller
 
         $customer->delete();
         return redirect()->route('dashboard.customers')->with('success', 'Customer deleted successfully!');
+    }
+
+    public function show(Customer $customer): View
+    {
+        // Calculate totals for the summary cards
+        $totals = \App\Models\Sale::where('customer_id', $customer->id)
+            ->whereIn('status', ['completed', 'partial', 'due'])
+            ->selectRaw('
+                COALESCE(SUM(grand_total), 0) as total_bill,
+                COALESCE(SUM(amount_tendered), 0) as total_paid,
+                COALESCE(SUM(grand_total - amount_tendered), 0) as total_due
+            ')
+            ->first();
+
+        // Paginated list of sales for this customer
+        $sales = \App\Models\Sale::where('customer_id', $customer->id)
+            ->latest('sale_date')
+            ->paginate(10);
+
+        return view('dashboard.customers.show', compact('customer', 'totals', 'sales'));
     }
 }

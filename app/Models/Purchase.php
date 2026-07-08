@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Traits\BelongsToTenant;
+
 #[Fillable([
     'reference_no',
     'supplier_id',
@@ -28,7 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 ])]
 class Purchase extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
 
     protected function casts(): array
     {

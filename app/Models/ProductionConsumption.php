@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class ProductionConsumption extends Model
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'production_batch_id',
         'product_id',

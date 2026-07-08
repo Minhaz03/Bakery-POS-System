@@ -48,20 +48,41 @@ class PosController extends Controller
     public function checkout(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'customer_id' => 'nullable|exists:customers,id',
-            'sale_date'   => 'required|date',
-            'discount'    => 'required|numeric|min:0',
-            'tax'         => 'required|numeric|min:0',
-            'subtotal'    => 'required|numeric|min:0',
-            'total'       => 'required|numeric|min:0',
-            'cart'        => 'required|array|min:1',
-            'cart.*.id'   => 'required|exists:products,id',
-            'cart.*.qty'  => 'required|numeric|min:0.1',
-            'cart.*.price'=> 'required|numeric|min:0',
+            'customer_id'     => 'nullable|exists:customers,id',
+            'sale_date'       => 'required|date',
+            'discount'        => 'required|numeric|min:0',
+            'tax'             => 'required|numeric|min:0',
+            'subtotal'        => 'required|numeric|min:0',
+            'total'           => 'required|numeric|min:0',
+            'amount_tendered' => 'required|numeric|min:0',
+            'payment_method'  => 'required|string|in:cash,card,mobile_pay,credit',
+            'cart'            => 'required|array|min:1',
+            'cart.*.id'       => 'required|exists:products,id',
+            'cart.*.qty'      => 'required|numeric|min:0.1',
+            'cart.*.price'    => 'required|numeric|min:0',
         ]);
 
         try {
             DB::beginTransaction();
+
+            $amountTendered = (float) $validated['amount_tendered'];
+            $total = (float) $validated['total'];
+            $changeAmount = 0.00;
+
+            if ($validated['payment_method'] === 'credit') {
+                $amountTendered = 0.00;
+                $status = 'due';
+            } else {
+                if ($amountTendered >= $total) {
+                    $changeAmount = $amountTendered - $total;
+                    $amountTendered = $total;
+                    $status = 'completed';
+                } elseif ($amountTendered > 0) {
+                    $status = 'partial';
+                } else {
+                    $status = 'due';
+                }
+            }
 
             // Create Sale record
             $sale = Sale::create([
@@ -70,11 +91,11 @@ class PosController extends Controller
                 'subtotal'        => $validated['subtotal'],
                 'discount_amount' => $validated['discount'],
                 'tax_amount'      => $validated['tax'],
-                'grand_total'     => $validated['total'],
-                'amount_tendered' => $validated['total'], // Assume fully paid for POS cash checkout
-                'change_amount'   => 0,
-                'payment_method'  => 'cash', // Default to cash for POS
-                'status'          => 'completed',
+                'grand_total'     => $total,
+                'amount_tendered' => $amountTendered,
+                'change_amount'   => $changeAmount,
+                'payment_method'  => $validated['payment_method'],
+                'status'          => $status,
                 'created_by'      => auth()->id(),
             ]);
 

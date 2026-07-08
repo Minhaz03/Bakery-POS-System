@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Traits\BelongsToTenant;
+
 #[Fillable(['name', 'short_name', 'base_unit_id', 'operator', 'conversion_rate'])]
 class Unit extends Model
 {
+    use BelongsToTenant;
     protected function casts(): array
     {
         return [

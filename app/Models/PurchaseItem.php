@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Traits\BelongsToTenant;
+
 #[Fillable(['purchase_id', 'product_id', 'unit_id', 'quantity', 'net_quantity', 'unit_cost', 'subtotal'])]
 class PurchaseItem extends Model
 {
+    use BelongsToTenant;
     protected function casts(): array
     {
         return [

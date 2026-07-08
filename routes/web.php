@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
@@ -32,10 +34,16 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'subscribed'])->name('dashboard');
 
-// Dashboard Subpages
+// Billing & Subscription Routes (Exempt from 'subscribed' middleware)
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/billing', [\App\Http\Controllers\BillingController::class, 'index'])->name('billing');
+    Route::post('/billing/subscribe', [\App\Http\Controllers\BillingController::class, 'subscribe'])->name('billing.subscribe');
+});
+
+// Dashboard Subpages (Protected by 'subscribed' middleware)
+Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::patch('products/{product}/toggle-stock', [ProductController::class, 'toggleStock'])->name('products.toggle-stock');
 
     // CRUD Resources with custom route names matching the UI sidebar
@@ -129,6 +137,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     Route::get('/pos-terminal', [PosController::class, 'posTerminal'])->name('pos-terminal');
     Route::post('/pos-terminal/checkout', [PosController::class, 'checkout'])->name('pos-terminal.checkout');
     Route::get('sales/{sale}/print', [SaleController::class, 'print'])->name('sales.print');
+    Route::post('sales/{sale}/collect-payment', [SaleController::class, 'collectPayment'])->name('sales.collect-payment');
     Route::resource('sales', SaleController::class)->parameters(['sales' => 'sale'])->except(['create', 'store'])->names([
         'index' => 'sales',
         'show' => 'sales.show',
@@ -176,13 +185,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/impersonate/leave', [\App\Http\Controllers\Saas\ImpersonationController::class, 'leave'])->name('impersonation.leave');
 });
 
-// Admin Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
+// Admin Routes (now merged into dashboard prefix)
+Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])->group(function () {
     // General Settings & Profile
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+
 
     // Module Control Panel
     Route::middleware('can:modules.manage')->group(function () {
@@ -204,6 +216,24 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
     Route::put('/roles/{role}/permissions', [RoleController::class, 'syncPermissions'])->name('roles.sync-permissions');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+});
+
+// ── SaaS Super Admin Routes ──
+Route::prefix('saas')->name('saas.')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Saas\AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Saas\AuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [\App\Http\Controllers\Saas\AuthController::class, 'logout'])->name('logout');
+
+    Route::middleware('auth:admin')->group(function () {
+        Route::get('/', function() {
+            return redirect()->route('saas.subscriptions.index');
+        });
+        Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+        Route::resource('plans', PlanController::class)->except(['show']);
+        Route::get('users', [\App\Http\Controllers\Saas\UserController::class, 'index'])->name('users.index');
+        Route::get('users/{user}', [\App\Http\Controllers\Saas\UserController::class, 'show'])->name('users.show');
+        Route::post('impersonate/{user}', [\App\Http\Controllers\Saas\ImpersonationController::class, 'impersonate'])->name('impersonate');
+    });
 });
 
 require __DIR__.'/auth.php';

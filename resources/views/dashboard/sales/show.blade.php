@@ -151,8 +151,12 @@
                         <span style="font-size:13px;color:#64748b;font-weight:600;">Status</span>
                         @if($sale->status === 'completed')
                             <span style="background:#dcfce7;color:#15803d;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;"><i class="bi bi-check-circle-fill"></i> Completed</span>
+                        @elseif($sale->status === 'partial')
+                            <span style="background:#fef3c7;color:#b45309;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;"><i class="bi bi-exclamation-circle-fill"></i> Partially Paid</span>
+                        @elseif($sale->status === 'due')
+                            <span style="background:#fee2e2;color:#b91c1c;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;"><i class="bi bi-x-circle-fill"></i> Due (Unpaid)</span>
                         @elseif($sale->status === 'refunded')
-                            <span style="background:#fef3c7;color:#d97706;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;"><i class="bi bi-arrow-counterclockwise"></i> Refunded</span>
+                            <span style="background:#f1f5f9;color:#475569;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;"><i class="bi bi-arrow-counterclockwise"></i> Refunded</span>
                         @else
                             <span style="background:#fee2e2;color:#b91c1c;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;"><i class="bi bi-slash-circle"></i> Voided</span>
                         @endif
@@ -189,19 +193,49 @@
                         <span>Grand Total:</span>
                         <span style="color:#6366f1;">৳ {{ number_format($sale->grand_total, 2) }}</span>
                     </div>
-                    @if($sale->amount_tendered > 0)
                     <hr style="border:0;border-top:1px solid #f1f5f9;margin:4px 0;">
                     <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#475569;">
-                        <span>Amount Tendered:</span>
-                        <span style="font-weight:600;color:#0f172a;">৳ {{ number_format($sale->amount_tendered, 2) }}</span>
+                        <span>Amount Paid:</span>
+                        <span style="font-weight:600;color:#16a34a;">৳ {{ number_format($sale->amount_tendered, 2) }}</span>
                     </div>
+                    @if($sale->change_amount > 0)
                     <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#475569;">
                         <span>Change Given:</span>
-                        <span style="font-weight:700;color:#16a34a;">৳ {{ number_format($sale->change_amount, 2) }}</span>
+                        <span style="font-weight:700;color:#475569;">৳ {{ number_format($sale->change_amount, 2) }}</span>
+                    </div>
+                    @endif
+                    @if($sale->grand_total - $sale->amount_tendered > 0)
+                    <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#475569;">
+                        <span>Remaining Due:</span>
+                        <span style="font-weight:700;color:#dc2626;">৳ {{ number_format($sale->grand_total - $sale->amount_tendered, 2) }}</span>
                     </div>
                     @endif
                 </div>
             </div>
+
+            @if(in_array($sale->status, ['partial', 'due']) && ($sale->grand_total - $sale->amount_tendered > 0))
+            <div class="card" style="border:1px solid #fed7aa;background:#fffaf5;">
+                <div class="card-header" style="background:#ffedd5;border-bottom:1px solid #fed7aa;">
+                    <span class="card-title" style="color:#c2410c;"><i class="bi bi-cash-coin"></i> Collect Due Payment</span>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('dashboard.sales.collect-payment', $sale) }}">
+                        @csrf
+                        <div style="margin-bottom:12px;">
+                            <label class="form-label" style="font-weight:600;color:#475569;">Remaining Due Amount</label>
+                            <div style="font-size:20px;font-weight:800;color:#dc2626;">৳ {{ number_format($sale->grand_total - $sale->amount_tendered, 2) }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-weight:600;">Amount to Collect (৳) <span style="color:var(--danger)">*</span></label>
+                            <input type="number" step="0.01" max="{{ $sale->grand_total - $sale->amount_tendered }}" min="0.01" name="amount_collected" value="{{ $sale->grand_total - $sale->amount_tendered }}" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;background:#ea580c;border-color:#ea580c;color:#fff;">
+                            Collect & Update
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 

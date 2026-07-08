@@ -101,4 +101,32 @@ class SaleController extends Controller
         return redirect()->route('dashboard.sales')
             ->with('success', 'Sale invoice ' . $sale->invoice_no . ' has been voided and removed.');
     }
+
+    public function collectPayment(Request $request, Sale $sale): RedirectResponse
+    {
+        $validated = $request->validate([
+            'amount_collected' => 'required|numeric|min:0.01',
+        ]);
+
+        $collected = (float) $validated['amount_collected'];
+        $remaining = $sale->grand_total - $sale->amount_tendered;
+
+        if ($collected > $remaining) {
+            return redirect()->back()->with('error', 'Collected amount cannot exceed the remaining due amount of ৳' . number_format($remaining, 2));
+        }
+
+        $newAmountTendered = $sale->amount_tendered + $collected;
+        $status = 'completed';
+        if ($newAmountTendered < $sale->grand_total) {
+            $status = 'partial';
+        }
+
+        $sale->update([
+            'amount_tendered' => $newAmountTendered,
+            'status' => $status,
+        ]);
+
+        return redirect()->route('dashboard.sales.show', $sale)
+            ->with('success', 'Payment of ৳' . number_format($collected, 2) . ' collected successfully.');
+    }
 }

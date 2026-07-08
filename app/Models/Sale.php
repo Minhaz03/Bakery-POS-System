@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Traits\BelongsToTenant;
+
 #[Fillable([
     'invoice_no',
     'customer_id',
@@ -25,7 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 ])]
 class Sale extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
 
     protected function casts(): array
     {

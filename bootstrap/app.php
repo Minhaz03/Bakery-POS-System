@@ -12,8 +12,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(fn (Request $request) =>
+            $request->is('saas*') ? route('saas.login') : route('login')
+        );
+        
         $middleware->alias([
             'module' => \App\Http\Middleware\EnsureModuleActive::class,
+            'subscribed' => \App\Http\Middleware\CheckSubscription::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

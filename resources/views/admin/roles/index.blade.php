@@ -582,14 +582,14 @@
             <p>Define roles and assign granular permissions</p>
         </div>
         <div style="margin-left:auto;">
-            <a href="{{ route('admin.users.index') }}" class="btn btn-outline" style="font-size:12.5px;padding:6px 14px;">
+            <a href="{{ route('dashboard.users.index') }}" class="btn btn-outline" style="font-size:12.5px;padding:6px 14px;">
                 <i class="bi bi-people"></i> Manage Users
             </a>
         </div>
     </div>
 
     {{-- ── Create Role – compact inline bar ── --}}
-    <form method="POST" action="{{ route('admin.roles.store') }}">
+    <form method="POST" action="{{ route('dashboard.roles.store') }}">
         @csrf
         <div class="create-row">
             <i class="bi bi-shield-plus" style="color:#8b5cf6;font-size:16px;flex-shrink:0;"></i>

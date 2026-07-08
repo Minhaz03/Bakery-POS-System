@@ -15,7 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Set session tenant context so all seeded records fall under Tenant 1
+        session(['tenant_id' => 1]);
 
         $this->call([
             RolesAndPermissionsSeeder::class,

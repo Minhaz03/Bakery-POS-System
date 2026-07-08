@@ -57,7 +57,7 @@
                                 <div style="font-size:13.5px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" x-text="item.name"></div>
                                 <div style="font-size:11px;color:#64748b;margin-top:2px;" x-text="item.category"></div>
                             </div>
-                            <div style="padding:10px 14px;display:flex;justify-content:between;align-items:center;background:#fff;">
+                            <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;background:#fff;">
                                 <span style="font-weight:800;color:var(--primary);font-size:13.5px;">৳<span x-text="item.price"></span></span>
                                 <span style="font-size:10px;padding:1px 6px;border-radius:999px;font-weight:600;" :class="item.stock <= 5 ? 'bg-orange-100 text-orange-800' : 'bg-slate-100 text-slate-800'">
                                     Stock: <span x-text="item.stock"></span>
@@ -137,19 +137,46 @@
 
             <!-- Pricing Calculation -->
             <div style="padding:18px;background:#f8fafc;border-top:1px solid #e2e8f0;flex-shrink:0;display:flex;flex-direction:column;gap:8px;">
-                <div style="display:flex;justify-content:between;font-size:12.5px;color:#475569;">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#475569;">
                     <span>Subtotal</span>
                     <span style="margin-left:auto;font-weight:600;color:#0f172a;">৳<span x-text="subtotal()"></span></span>
                 </div>
-                <div style="display:flex;justify-content:between;font-size:12.5px;color:#475569;align-items:center;">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#475569;align-items:center;">
                     <span>Discount (৳)</span>
                     <input type="number" x-model.number="discount" min="0" class="form-control" style="width:70px;padding:2px 6px;font-size:12px;height:26px;text-align:right;margin-left:auto;">
                 </div>
-                <div style="display:flex;justify-content:between;font-size:12.5px;color:#475569;">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#475569;">
                     <span>VAT / Tax (5%)</span>
                     <span style="margin-left:auto;font-weight:600;color:#0f172a;">৳<span x-text="tax()"></span></span>
                 </div>
-                <div style="display:flex;justify-content:between;font-size:15px;font-weight:800;color:#0f172a;border-top:1px dashed #cbd5e1;padding-top:10px;margin-top:4px;">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#475569;align-items:center;">
+                    <span>Payment Method</span>
+                    <select x-model="paymentMethod" class="form-control" style="width:120px;padding:2px 6px;font-size:12px;height:26px;margin-left:auto;">
+                        <option value="cash">Cash</option>
+                        <option value="card">Card</option>
+                        <option value="mobile_pay">Mobile Pay</option>
+                        <option value="credit">Credit (Unpaid)</option>
+                    </select>
+                </div>
+                <div x-show="paymentMethod !== 'credit'">
+                    <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#475569;align-items:center;">
+                        <span>Amount Paid (৳)</span>
+                        <input type="number" x-model.number="amountTendered" min="0" class="form-control" style="width:70px;padding:2px 6px;font-size:12px;height:26px;text-align:right;">
+                    </div>
+                </div>
+                <div x-show="paymentMethod !== 'credit' && amountTendered > total()">
+                    <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#475569;align-items:center;">
+                        <span>Change Return</span>
+                        <span style="font-weight:600;color:#16a34a;">৳<span x-text="Math.max(0, amountTendered - total())"></span></span>
+                    </div>
+                </div>
+                <div x-show="paymentMethod !== 'credit' && amountTendered < total()">
+                    <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#475569;align-items:center;">
+                        <span>Due Balance</span>
+                        <span style="font-weight:600;color:#dc2626;">৳<span x-text="Math.max(0, total() - amountTendered)"></span></span>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#0f172a;border-top:1px dashed #cbd5e1;padding-top:10px;margin-top:4px;">
                     <span>Total Bill</span>
                     <span style="margin-left:auto;color:var(--primary);">৳<span x-text="total()"></span></span>
                 </div>
@@ -199,6 +226,8 @@
                 activeCategory: 'All',
                 discount: 0,
                 customerId: '',
+                paymentMethod: 'cash',
+                amountTendered: 0,
                 saleDate: new Date().toISOString().split('T')[0],
                 processing: false,
                 items: @json($posItems),
@@ -217,6 +246,22 @@
                             this.saleDate = dateStr;
                         }
                     });
+
+                    this.$watch('cart', () => this.autoSetPaidAmount());
+                    this.$watch('discount', () => this.autoSetPaidAmount());
+                    this.$watch('paymentMethod', (val) => {
+                        if (val === 'credit') {
+                            this.amountTendered = 0;
+                        } else {
+                            this.amountTendered = this.total();
+                        }
+                    });
+                },
+
+                autoSetPaidAmount() {
+                    if (this.paymentMethod !== 'credit') {
+                        this.amountTendered = this.total();
+                    }
                 },
 
                 filteredItems() {
@@ -300,6 +345,8 @@
                                 tax: this.tax(),
                                 subtotal: this.subtotal(),
                                 total: totalBill,
+                                amount_tendered: this.amountTendered || 0,
+                                payment_method: this.paymentMethod,
                                 cart: this.cart
                             })
                         });

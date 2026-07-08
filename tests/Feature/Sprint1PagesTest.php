@@ -18,20 +18,20 @@ test('guest users are redirected to login from dashboard', function () {
 });
 
 test('guest users are redirected to login from admin routes', function () {
-    $response = $this->get(route('admin.settings.index'));
+    $response = $this->get(route('dashboard.settings.index'));
     $response->assertRedirect(route('login'));
 
-    $response = $this->get(route('admin.modules.index'));
+    $response = $this->get(route('dashboard.modules.index'));
     $response->assertRedirect(route('login'));
 });
 
 test('regular logged-in users without permissions cannot access modules but can access settings', function () {
     $user = User::factory()->create(); // No roles assigned
 
-    $response = $this->actingAs($user)->get(route('admin.settings.index'));
+    $response = $this->actingAs($user)->get(route('dashboard.settings.index'));
     $response->assertStatus(200);
 
-    $response = $this->actingAs($user)->get(route('admin.modules.index'));
+    $response = $this->actingAs($user)->get(route('dashboard.modules.index'));
     $response->assertStatus(403);
 });
 
@@ -47,12 +47,12 @@ test('admin with appropriate roles can access settings and update them', functio
     $admin->assignRole('Super Admin');
 
     // Test GET settings page
-    $response = $this->actingAs($admin)->get(route('admin.settings.index'));
+    $response = $this->actingAs($admin)->get(route('dashboard.settings.index'));
     $response->assertOk();
     $response->assertSee('Settings');
 
     // Test POST settings update
-    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+    $response = $this->actingAs($admin)->post(route('dashboard.settings.update'), [
         'business_name'    => 'Test POS System',
         'business_address' => '123 Test Street',
         'business_phone'   => '123456789',
@@ -73,12 +73,12 @@ test('admin with appropriate roles can access modules and toggle infrastructure 
     $admin->assignRole('Super Admin');
 
     // Test GET modules page
-    $response = $this->actingAs($admin)->get(route('admin.modules.index'));
+    $response = $this->actingAs($admin)->get(route('dashboard.modules.index'));
     $response->assertOk();
     $response->assertSee('Module');
 
     // Test POST toggle infrastructure module on
-    $response = $this->actingAs($admin)->post(route('admin.modules.toggle-infrastructure', ['module' => 'warehouse']), [
+    $response = $this->actingAs($admin)->post(route('dashboard.modules.toggle-infrastructure', ['module' => 'warehouse']), [
         'enabled' => 1,
     ]);
     $response->assertSessionHasNoErrors();
@@ -87,7 +87,7 @@ test('admin with appropriate roles can access modules and toggle infrastructure 
     expect(Setting::get('module_warehouse_enabled'))->toBe(true);
 
     // Test POST toggle infrastructure module off
-    $response = $this->actingAs($admin)->post(route('admin.modules.toggle-infrastructure', ['module' => 'warehouse']), [
+    $response = $this->actingAs($admin)->post(route('dashboard.modules.toggle-infrastructure', ['module' => 'warehouse']), [
         'enabled' => 0,
     ]);
     $response->assertSessionHasNoErrors();
@@ -104,7 +104,7 @@ test('admin with appropriate roles can change active business type module', func
     expect(Setting::get('active_business_type'))->toBe('bakery');
 
     // Test POST set business type to bakery (available in config)
-    $response = $this->actingAs($admin)->post(route('admin.modules.set-business-type'), [
+    $response = $this->actingAs($admin)->post(route('dashboard.modules.set-business-type'), [
         'business_type' => 'bakery',
     ]);
     $response->assertSessionHasNoErrors();

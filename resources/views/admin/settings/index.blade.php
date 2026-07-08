@@ -89,7 +89,7 @@
         <!-- TAB 1: Business Profile (Admin only) -->
         @can('settings.manage')
         <div id="tab-business" class="tab-content active">
-            <form method="POST" action="{{ route('admin.settings.update') }}">
+            <form method="POST" action="{{ route('dashboard.settings.update') }}">
                 @csrf
                 <div class="card" style="margin-bottom: 20px;">
                     <div class="card-header">

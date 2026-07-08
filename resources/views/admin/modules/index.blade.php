@@ -48,7 +48,7 @@
                             {{ $isEnabled ? 'Enabled' : 'Disabled' }}
                         </span>
                     </div>
-                    <form method="POST" action="{{ route('admin.modules.toggle-infrastructure', $key) }}" style="flex-shrink:0;">
+                    <form method="POST" action="{{ route('dashboard.modules.toggle-infrastructure', $key) }}" style="flex-shrink:0;">
                         @csrf
                         <input type="hidden" name="enabled" value="{{ $isEnabled ? '0' : '1' }}">
                         <label class="toggle" title="{{ $isEnabled ? 'Disable' : 'Enable' }} {{ $module['name'] }}">
@@ -74,7 +74,7 @@
                 <i class="bi bi-exclamation-triangle-fill"></i>
                 Changing the business type module will activate the new module's features. Existing data is preserved when switching.
             </div>
-            <form method="POST" action="{{ route('admin.modules.set-business-type') }}" id="businessTypeForm">
+            <form method="POST" action="{{ route('dashboard.modules.set-business-type') }}" id="businessTypeForm">
                 @csrf
                 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px;">
                     @foreach($modules['business_type'] as $key => $module)

@@ -67,7 +67,7 @@ class UserController extends Controller
             ->withProperties(['role' => $validated['role'] ?? 'none', 'ip' => $request->ip()])
             ->log("User '{$user->name}' created");
 
-        return redirect()->route('admin.users.index')->with('success', "User '{$user->name}' created successfully!");
+        return redirect()->route('dashboard.users.index')->with('success', "User '{$user->name}' created successfully!");
     }
 
     /**
@@ -95,7 +95,7 @@ class UserController extends Controller
             ->withProperties(['ip' => $request->ip()])
             ->log("User '{$user->name}' updated");
 
-        return redirect()->route('admin.users.index')->with('success', "User '{$user->name}' updated successfully!");
+        return redirect()->route('dashboard.users.index')->with('success', "User '{$user->name}' updated successfully!");
     }
 
     /**
@@ -116,7 +116,7 @@ class UserController extends Controller
             ->withProperties(['roles' => $roles, 'ip' => $request->ip()])
             ->log("Roles updated for user '{$user->name}'");
 
-        return redirect()->route('admin.users.index')->with('success', "Roles updated for {$user->name}!");
+        return redirect()->route('dashboard.users.index')->with('success', "Roles updated for {$user->name}!");
     }
 
     /**
@@ -126,7 +126,7 @@ class UserController extends Controller
     {
         // Prevent self-deletion
         if ($user->id === auth()->id()) {
-            return redirect()->route('admin.users.index')->with('error', 'You cannot delete your own account!');
+            return redirect()->route('dashboard.users.index')->with('error', 'You cannot delete your own account!');
         }
 
         $name = $user->name;
@@ -136,6 +136,6 @@ class UserController extends Controller
             ->withProperties(['user' => $name, 'ip' => $request->ip()])
             ->log("User '{$name}' deleted");
 
-        return redirect()->route('admin.users.index')->with('success', "User '{$name}' deleted successfully!");
+        return redirect()->route('dashboard.users.index')->with('success', "User '{$name}' deleted successfully!");
     }
 }

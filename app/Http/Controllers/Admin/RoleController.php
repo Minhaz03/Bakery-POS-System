@@ -42,7 +42,7 @@ class RoleController extends Controller
             ->withProperties(['role' => $role->name, 'ip' => $request->ip()])
             ->log("Role '{$role->name}' created");
 
-        return redirect()->route('admin.roles.index')->with('success', "Role '{$role->name}' created!");
+        return redirect()->route('dashboard.roles.index')->with('success', "Role '{$role->name}' created!");
     }
 
     /**
@@ -52,7 +52,7 @@ class RoleController extends Controller
     {
         // Protect built-in roles
         if (in_array($role->name, ['Admin', 'super-admin'])) {
-            return redirect()->route('admin.roles.index')->with('error', 'Cannot rename a system role.');
+            return redirect()->route('dashboard.roles.index')->with('error', 'Cannot rename a system role.');
         }
 
         $request->validate([
@@ -66,7 +66,7 @@ class RoleController extends Controller
             ->withProperties(['old' => $old, 'new' => $role->name, 'ip' => $request->ip()])
             ->log("Role renamed from '{$old}' to '{$role->name}'");
 
-        return redirect()->route('admin.roles.index')->with('success', "Role renamed to '{$role->name}'!");
+        return redirect()->route('dashboard.roles.index')->with('success', "Role renamed to '{$role->name}'!");
     }
 
     /**
@@ -86,7 +86,7 @@ class RoleController extends Controller
             ->withProperties(['role' => $role->name, 'permissions' => $permissions, 'ip' => $request->ip()])
             ->log("Permissions synced for role '{$role->name}'");
 
-        return redirect()->route('admin.roles.index')->with('success', "Permissions updated for '{$role->name}'!");
+        return redirect()->route('dashboard.roles.index')->with('success', "Permissions updated for '{$role->name}'!");
     }
 
     /**
@@ -95,7 +95,7 @@ class RoleController extends Controller
     public function destroy(Request $request, Role $role): RedirectResponse
     {
         if (in_array($role->name, ['Admin', 'super-admin'])) {
-            return redirect()->route('admin.roles.index')->with('error', 'Cannot delete a system role.');
+            return redirect()->route('dashboard.roles.index')->with('error', 'Cannot delete a system role.');
         }
 
         $name = $role->name;
@@ -105,6 +105,6 @@ class RoleController extends Controller
             ->withProperties(['role' => $name, 'ip' => $request->ip()])
             ->log("Role '{$name}' deleted");
 
-        return redirect()->route('admin.roles.index')->with('success', "Role '{$name}' deleted!");
+        return redirect()->route('dashboard.roles.index')->with('success', "Role '{$name}' deleted!");
     }
 }

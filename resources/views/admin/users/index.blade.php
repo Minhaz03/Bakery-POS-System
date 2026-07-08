@@ -174,7 +174,7 @@
             <p>Manage system users and assign role-based permissions</p>
         </div>
         <div style="margin-left:auto;display:flex;gap:8px;">
-            <a href="{{ route('admin.roles.index') }}" class="btn btn-outline">
+            <a href="{{ route('dashboard.roles.index') }}" class="btn btn-outline">
                 <i class="bi bi-shield-lock"></i> Manage Roles
             </a>
             <button class="btn btn-primary" onclick="openModal('createUserModal')">
@@ -214,7 +214,7 @@
         <div class="card-header">
             <i class="bi bi-table" style="color:#6366f1;font-size:18px;"></i>
             <span class="card-title">All Users</span>
-            <form method="GET" action="{{ route('admin.users.index') }}" class="filter-bar" style="margin-left:auto;margin-bottom:0;">
+            <form method="GET" action="{{ route('dashboard.users.index') }}" class="filter-bar" style="margin-left:auto;margin-bottom:0;">
                 <input type="text" name="search" class="form-control" placeholder="Search name or email…" value="{{ request('search') }}" style="max-width:210px;">
                 <select name="role" class="form-control" style="max-width:160px;">
                     <option value="">All Roles</option>
@@ -224,7 +224,7 @@
                 </select>
                 <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
                 @if(request()->hasAny(['search','role']))
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline btn-sm"><i class="bi bi-x-lg"></i></a>
+                    <a href="{{ route('dashboard.users.index') }}" class="btn btn-outline btn-sm"><i class="bi bi-x-lg"></i></a>
                 @endif
             </form>
         </div>
@@ -325,7 +325,7 @@
                 </div>
                 <button class="modal-close" onclick="closeModal('createUserModal')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <form method="POST" action="{{ route('admin.users.store') }}">
+            <form method="POST" action="{{ route('dashboard.users.store') }}">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
@@ -451,7 +451,7 @@
                     @if($roles->isEmpty())
                         <div style="text-align:center;padding:24px;color:#94a3b8;font-size:13px;">
                             <i class="bi bi-shield-x" style="font-size:32px;display:block;margin-bottom:8px;"></i>
-                            No roles defined yet. <a href="{{ route('admin.roles.index') }}" style="color:#6366f1;">Create roles first.</a>
+                            No roles defined yet. <a href="{{ route('dashboard.roles.index') }}" style="color:#6366f1;">Create roles first.</a>
                         </div>
                     @endif
                 </div>

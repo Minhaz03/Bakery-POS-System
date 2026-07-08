@@ -18,17 +18,17 @@ class StockLedgerSeeder extends Seeder
         $userId = $adminUser ? $adminUser->id : null;
 
         // Fetch products by SKU to link historical stock movements to real products
-        $sourdough = Product::where('sku', 'BAK-SOURDOUGH-01')->first();
-        $croissant = Product::where('sku', 'BAK-CROISSANT-01')->first();
-        $chocolateCake = Product::where('sku', 'BAK-CAKE-CHOC-SL')->first();
+        $bun = Product::where('sku', 'BAK-BUN-01')->first();
+        $toast = Product::where('sku', 'BAK-TOAST-01')->first();
+        $poundCake = Product::where('sku', 'BAK-CAKE-POUND')->first();
         $flour = Product::where('sku', 'RAW-FLOUR-001')->first();
         $box = Product::where('sku', 'PKG-BOX-CAKE-8')->first();
 
         $movements = [];
 
-        if ($sourdough) {
+        if ($bun) {
             $movements[] = [
-                'product_id' => $sourdough->id,
+                'product_id' => $bun->id,
                 'type' => 'Production (+)',
                 'qty' => 30.000,
                 'user_id' => $userId,
@@ -36,7 +36,7 @@ class StockLedgerSeeder extends Seeder
                 'created_at' => now()->subDay()->setHour(9)->setMinute(30),
             ];
             $movements[] = [
-                'product_id' => $sourdough->id,
+                'product_id' => $bun->id,
                 'type' => 'POS Sale (-)',
                 'qty' => -5.000,
                 'user_id' => $userId,
@@ -45,9 +45,9 @@ class StockLedgerSeeder extends Seeder
             ];
         }
 
-        if ($croissant) {
+        if ($toast) {
             $movements[] = [
-                'product_id' => $croissant->id,
+                'product_id' => $toast->id,
                 'type' => 'POS Sale (-)',
                 'qty' => -12.000,
                 'user_id' => $userId,
@@ -56,9 +56,9 @@ class StockLedgerSeeder extends Seeder
             ];
         }
 
-        if ($chocolateCake) {
+        if ($poundCake) {
             $movements[] = [
-                'product_id' => $chocolateCake->id,
+                'product_id' => $poundCake->id,
                 'type' => 'Stock Audit (Adj)',
                 'qty' => -2.000,
                 'user_id' => $userId,
