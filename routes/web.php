@@ -29,7 +29,14 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
 
-    return view('welcome');
+    $plans = [];
+    try {
+        $plans = \App\Models\Plan::all();
+    } catch (\Exception $e) {
+        // Fallback to empty if db is not migrated yet
+    }
+
+    return view('welcome', compact('plans'));
 })->name('home');
 
 Route::get('/dashboard', function () {
