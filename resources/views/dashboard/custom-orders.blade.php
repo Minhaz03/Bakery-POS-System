@@ -1,6 +1,6 @@
 <x-layouts.admin title="Custom Bakery Orders">
 
-    <div x-data="{ showModal: false }" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+    <div x-data="{ showModal: {{ request('openModal') ? 'true' : 'false' }} }" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
         <div>
             <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">Custom Orders</h2>
             <p style="font-size:13.5px;color:#64748b;margin:4px 0 0 0;">Manage custom cake requests, delivery dates, client specifications, and down payments.</p>

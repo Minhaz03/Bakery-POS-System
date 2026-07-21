@@ -32,6 +32,7 @@ class PosController extends Controller
                 'price' => (float) $product->sale_price,
                 'category' => $product->category ? $product->category->name : 'Uncategorized',
                 'image' => $product->image ?: 'bi-box-seam',
+                'image_url' => $product->image ? asset('storage/' . $product->image) : null,
                 'stock' => (float) $product->stock_qty,
             ];
         })->toArray();

@@ -766,6 +766,11 @@
                         class="bi bi-box-seam nav-icon"></i> Products</a>
             </div>
             <div class="nav-item">
+                <a href="{{ route('dashboard.pos-items') }}"
+                    class="nav-link {{ request()->routeIs('dashboard.pos-items') ? 'active' : '' }}"><i
+                        class="bi bi-grid-3x3-gap nav-icon"></i> POS Items</a>
+            </div>
+            <div class="nav-item">
                 <a href="{{ route('dashboard.categories') }}"
                     class="nav-link {{ request()->routeIs('dashboard.categories') ? 'active' : '' }}"><i
                         class="bi bi-tags nav-icon"></i> Categories</a>

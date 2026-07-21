@@ -45,12 +45,12 @@
             <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
                 @php
                     $quickActions = [
-                        ['icon'=>'bi-calculator',     'label'=>'Open POS',          'href'=>'#', 'color'=>'#6366f1'],
-                        ['icon'=>'bi-plus-circle',    'label'=>'New Purchase',       'href'=>'#', 'color'=>'#10b981'],
-                        ['icon'=>'bi-egg-fried',      'label'=>'New Production',     'href'=>'#', 'color'=>'#f59e0b'],
-                        ['icon'=>'bi-calendar-plus',  'label'=>'New Custom Order',   'href'=>'#', 'color'=>'#ef4444'],
-                        ['icon'=>'bi-box-seam',       'label'=>'Add Product',        'href'=>'#', 'color'=>'#8b5cf6'],
-                        ['icon'=>'bi-bar-chart-line', 'label'=>'View Reports',       'href'=>'#', 'color'=>'#06b6d4'],
+                        ['icon'=>'bi-calculator',     'label'=>'Open POS',          'href'=>route('dashboard.pos-terminal'),        'color'=>'#6366f1'],
+                        ['icon'=>'bi-plus-circle',    'label'=>'New Purchase',       'href'=>route('dashboard.purchases.create'),    'color'=>'#10b981'],
+                        ['icon'=>'bi-egg-fried',      'label'=>'New Production',     'href'=>route('dashboard.production'),          'color'=>'#f59e0b'],
+                        ['icon'=>'bi-calendar-plus',  'label'=>'New Custom Order',   'href'=>route('dashboard.custom-orders') . '?openModal=1', 'color'=>'#ef4444'],
+                        ['icon'=>'bi-box-seam',       'label'=>'Add Product',        'href'=>route('dashboard.products.create'),     'color'=>'#8b5cf6'],
+                        ['icon'=>'bi-bar-chart-line', 'label'=>'View Reports',       'href'=>route('dashboard.reports.index'),       'color'=>'#06b6d4'],
                     ];
                 @endphp
                 @foreach($quickActions as $action)
