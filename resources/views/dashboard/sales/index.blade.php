@@ -100,7 +100,10 @@
                                 <span style="background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;display:inline-block;"><i class="bi bi-slash-circle"></i> Voided</span>
                             @endif
                         </td>
-                        <td style="padding:14px 20px;color:#64748b;white-space:nowrap;"><i class="bi bi-clock"></i> {{ $sale->sale_date->format('d M Y') }}</td>
+                        <td style="padding:14px 20px;color:#64748b;white-space:nowrap;">
+                            <i class="bi bi-clock"></i> {{ $sale->sale_date->format('d M Y') }}<br>
+                            <span style="font-size:11px;color:#94a3b8;">{{ $sale->created_at->format('h:i A') }}</span>
+                        </td>
                         <td style="padding:14px 20px;text-align:center;font-size:16px;">
                             <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
                                 <a href="{{ route('dashboard.sales.show', $sale) }}" style="color:#0ea5e9;" title="View Invoice"><i class="bi bi-eye"></i></a>
