@@ -30,7 +30,11 @@
             <div class="card-header">
                 <i class="bi bi-graph-up" style="color:#6366f1;font-size:18px;"></i>
                 <span class="card-title">Sales Overview</span>
-                <span style="margin-left:auto;font-size:12px;color:#64748b;">Last 7 days</span>
+                <select style="margin-left:auto;font-size:12px;color:#64748b;border:1px solid #e2e8f0;border-radius:6px;padding:4px 8px;outline:none;background:#f8fafc;cursor:pointer;" onchange="window.location.href='{{ route('dashboard') }}?days='+this.value">
+                    <option value="7" {{ $salesChart['days'] == 7 ? 'selected' : '' }}>Last 7 days</option>
+                    <option value="14" {{ $salesChart['days'] == 14 ? 'selected' : '' }}>Last 14 days</option>
+                    <option value="30" {{ $salesChart['days'] == 30 ? 'selected' : '' }}>Last 30 days</option>
+                </select>
             </div>
             <div class="card-body" style="height:260px;display:flex;align-items:center;justify-content:center;">
                 <canvas id="salesChart"></canvas>
@@ -221,29 +225,76 @@
     <script>
         const ctx = document.getElementById('salesChart');
         if (ctx) {
+            const chartCtx = ctx.getContext('2d');
+            const gradient = chartCtx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: {!! json_encode($salesChart['labels']) !!},
                     datasets: [{
-                        label: 'Sales (৳)',
+                        label: 'Sales',
                         data: {!! json_encode($salesChart['data']) !!},
                         borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99,102,241,0.08)',
-                        borderWidth: 2.5,
+                        backgroundColor: gradient,
+                        borderWidth: 3,
                         tension: 0.4,
                         fill: true,
-                        pointBackgroundColor: '#6366f1',
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#6366f1',
+                        pointBorderWidth: 2,
                         pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#6366f1',
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 2,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { size: 13, family: 'sans-serif' },
+                            bodyFont: { size: 14, weight: 'bold', family: 'sans-serif' },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return '৳ ' + context.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                }
+                            }
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
-                        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                        y: { 
+                            beginAtZero: true, 
+                            border: { display: false },
+                            grid: { color: '#f1f5f9', drawTicks: false }, 
+                            ticks: { 
+                                font: { size: 11, family: 'sans-serif' }, 
+                                color: '#94a3b8', 
+                                padding: 10,
+                                callback: function(value) {
+                                    if (value >= 1000) return '৳ ' + (value / 1000) + 'k';
+                                    return '৳ ' + value;
+                                }
+                            } 
+                        },
+                        x: { 
+                            border: { display: false },
+                            grid: { display: false }, 
+                            ticks: { font: { size: 11, family: 'sans-serif' }, color: '#94a3b8', padding: 10 } 
+                        }
                     }
                 }
             });

@@ -15,7 +15,7 @@ class DashboardController extends Controller
     /**
      * Display the application dashboard.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         // 1. Today's Sales
         $todaysSales = Sale::whereDate('created_at', Carbon::today())->sum('grand_total');
@@ -29,18 +29,20 @@ class DashboardController extends Controller
         // 4. Pending Orders
         $pendingOrders = CustomOrder::where('status', 'pending')->count();
 
-        // 5. Sales Chart (Last 7 days)
+        // 5. Sales Chart
+        $days = (int) $request->get('days', 7);
         $labels = [];
         $data = [];
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = $days - 1; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
-            $labels[] = $date->format('D'); // Mon, Tue, etc.
+            $labels[] = $days <= 7 ? $date->format('D') : $date->format('M d'); // Mon, Tue, or Jan 01
             $daySales = Sale::whereDate('created_at', $date)->sum('grand_total');
             $data[] = (float) $daySales;
         }
         $salesChart = [
             'labels' => $labels,
             'data' => $data,
+            'days' => $days,
         ];
 
         // 6. Recent Sales
