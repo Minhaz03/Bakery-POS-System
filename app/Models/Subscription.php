@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subscription extends Model
 {
-    protected $fillable = ['tenant_id', 'plan_id', 'starts_at', 'ends_at', 'status'];
+    protected $fillable = ['tenant_id', 'plan_id', 'starts_at', 'ends_at', 'status', 'transaction_id', 'amount'];
 
     protected $casts = [
         'starts_at' => 'datetime',

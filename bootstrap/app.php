@@ -20,6 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'module' => \App\Http\Middleware\EnsureModuleActive::class,
             'subscribed' => \App\Http\Middleware\CheckSubscription::class,
         ]);
+        
+        $middleware->validateCsrfTokens(except: [
+            'dashboard/billing/payment/success',
+            'dashboard/billing/payment/fail',
+            'dashboard/billing/payment/cancel',
+            'dashboard/billing/payment/ipn',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -40,6 +40,12 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/billing', [\App\Http\Controllers\BillingController::class, 'index'])->name('billing');
     Route::post('/billing/subscribe', [\App\Http\Controllers\BillingController::class, 'subscribe'])->name('billing.subscribe');
+    
+    // SSLCommerz Callbacks
+    Route::post('/billing/payment/success', [\App\Http\Controllers\BillingController::class, 'paymentSuccess'])->name('billing.payment.success');
+    Route::post('/billing/payment/fail', [\App\Http\Controllers\BillingController::class, 'paymentFail'])->name('billing.payment.fail');
+    Route::post('/billing/payment/cancel', [\App\Http\Controllers\BillingController::class, 'paymentCancel'])->name('billing.payment.cancel');
+    Route::post('/billing/payment/ipn', [\App\Http\Controllers\BillingController::class, 'paymentIpn'])->name('billing.payment.ipn');
 });
 
 // Dashboard Subpages (Protected by 'subscribed' middleware)
