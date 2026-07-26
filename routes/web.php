@@ -43,9 +43,9 @@ Route::get('/', function () {
     return view('welcome', compact('plans'));
 })->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'subscribed'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'subscribed'])
+    ->name('dashboard');
 
 // Billing & Subscription Routes (Exempt from 'subscribed' middleware)
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
