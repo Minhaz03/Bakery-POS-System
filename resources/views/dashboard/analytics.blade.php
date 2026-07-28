@@ -1,14 +1,31 @@
 <x-layouts.admin title="Business Analytics">
 
-    <div style="display:flex;justify-content:between;align-items:center;margin-bottom:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
         <div>
             <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">Report & Analytics</h2>
             <p style="font-size:13.5px;color:#64748b;margin:4px 0 0 0;">View business sales trends, menu performance, and
                 financial analytics.</p>
         </div>
-        <button class="btn btn-primary" style="margin-left:auto;">
-            <i class="bi bi-calendar3"></i> Date Filter: Last 7 Days
-        </button>
+        <form method="GET" style="position: relative; display: inline-block;">
+            <div
+                style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--primary); pointer-events: none; display: flex; align-items: center;">
+                <i class="bi bi-calendar-date" style="font-size: 16px;"></i>
+            </div>
+            <select name="days"
+                style="appearance: none; -webkit-appearance: none; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 40px 10px 44px; font-size: 14.5px; font-weight: 600; color: #334155; cursor: pointer; transition: all 0.2s ease; outline: none; box-shadow: 0 1px 2px rgba(0,0,0,0.02);"
+                onchange="this.form.submit()"
+                onmouseover="this.style.borderColor='#cbd5e1'; this.style.backgroundColor='#f1f5f9';"
+                onmouseout="this.style.borderColor='#e2e8f0'; this.style.backgroundColor='#f8fafc';"
+                onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.15)'; this.style.backgroundColor='#fff';">
+                <option value="7" {{ request('days', 7) == 7 ? 'selected' : '' }}>Last 7 Days</option>
+                <option value="14" {{ request('days') == 14 ? 'selected' : '' }}>Last 14 Days</option>
+                <option value="30" {{ request('days') == 30 ? 'selected' : '' }}>Last 30 Days</option>
+            </select>
+            <div
+                style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #64748b; pointer-events: none; display: flex; align-items: center;">
+                <i class="bi bi-chevron-down" style="font-size: 13px; stroke-width: 2px;"></i>
+            </div>
+        </form>
     </div>
 
     <!-- Analytics KPIs -->
@@ -126,6 +143,12 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Trend Line Chart
             const trendCtx = document.getElementById('trendChart').getContext('2d');
+
+            // Create gradient for the fill
+            let gradient = trendCtx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
             new Chart(trendCtx, {
                 type: 'line',
                 data: {
@@ -134,31 +157,76 @@
                         label: 'Revenue (৳)',
                         data: @json($analytics['sales_by_day']['data']),
                         borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99,102,241,0.08)',
+                        backgroundColor: gradient,
                         borderWidth: 3,
                         tension: 0.4,
                         fill: true,
-                        pointBackgroundColor: '#6366f1',
-                        pointRadius: 5
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#6366f1',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#6366f1',
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#ffffff',
+                            bodyColor: '#e2e8f0',
+                            padding: 12,
+                            displayColors: false,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Revenue: ৳ ' + context.parsed.y.toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    });
+                                }
+                            }
                         }
                     },
                     scales: {
                         y: {
+                            beginAtZero: true,
                             grid: {
-                                color: '#f1f5f9'
+                                color: '#f1f5f9',
+                                drawBorder: false,
+                                borderDash: [5, 5]
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return '৳' + value;
+                                }
                             }
                         },
                         x: {
                             grid: {
-                                display: false
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                font: {
+                                    size: 11
+                                }
                             }
                         }
                     }

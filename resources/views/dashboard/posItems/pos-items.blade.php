@@ -60,7 +60,7 @@
             z-index: 500;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.25s ease;
+            transition: opacity 0.15s ease, visibility 0.15s ease;
             backdrop-filter: blur(3px);
         }
 
@@ -79,7 +79,7 @@
             background: #fff;
             z-index: 501;
             transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+            transition: transform 0.18s cubic-bezier(.25, 0, .15, 1);
             display: flex;
             flex-direction: column;
             box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12);
@@ -87,6 +87,34 @@
 
         .pos-drawer.open {
             transform: translateX(0);
+        }
+
+        /* -- View Details btn -- */
+        .btn-view-details {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1.5px solid #bae6fd;
+            background: #f0f9ff;
+            color: #0284c7;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+            white-space: nowrap;
+        }
+        .btn-view-details:hover {
+            background: #0ea5e9;
+            border-color: #0ea5e9;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(14,165,233,0.28);
+            transform: translateY(-1px);
+        }
+        .btn-view-details:active {
+            transform: translateY(0);
+            box-shadow: none;
         }
 
         .pos-drawer-header {
@@ -382,9 +410,9 @@
 
                             {{-- Actions --}}
                             <td style="padding:14px 20px;text-align:center;vertical-align:middle;font-size:16px;">
-                                <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-                                    {{-- Eye: open detail drawer --}}
-                                    <button type="button"
+                                <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                                    {{-- View Details btn --}}
+                                    <button type="button" class="btn-view-details"
                                         onclick="openDrawer({{ json_encode([
                                             'id' => $item->id,
                                             'name' => $item->name,
@@ -403,16 +431,17 @@
                                             'is_active' => $item->is_active,
                                             'edit_url' => route('dashboard.pos-items.edit', $item),
                                             'show_url' => route('dashboard.products.show', $item),
-                                        ]) }})"
-                                        style="background:none;border:none;color:#0ea5e9;font-size:16px;cursor:pointer;padding:0;"
-                                        title="View Details">
-                                        <i class="bi bi-eye"></i>
+                                        ]) }})">
+                                        <i class="bi bi-eye"></i> View
                                     </button>
 
                                     {{-- Edit --}}
-                                    <a href="{{ route('dashboard.pos-items.edit', $item) }}" style="color:#6366f1;"
-                                        title="Edit Product">
-                                        <i class="bi bi-pencil-square"></i>
+                                    <a href="{{ route('dashboard.pos-items.edit', $item) }}"
+                                        title="Edit Item"
+                                        style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1.5px solid #e0e7ff;background:#f5f3ff;color:#6366f1;font-size:12px;font-weight:600;text-decoration:none;transition:background 0.15s,border-color 0.15s,box-shadow 0.15s,transform 0.12s;"
+                                        onmouseover="this.style.background='#6366f1';this.style.color='#fff';this.style.borderColor='#6366f1';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.28)';this.style.transform='translateY(-1px)';"
+                                        onmouseout="this.style.background='#f5f3ff';this.style.color='#6366f1';this.style.borderColor='#e0e7ff';this.style.boxShadow='none';this.style.transform='translateY(0)';">
+                                        <i class="bi bi-pencil-square"></i> Edit
                                     </a>
                                 </div>
                             </td>
@@ -547,16 +576,16 @@
             </div>
 
             {{-- Action buttons --}}
-            <div style="display:flex;gap:10px;">
+            {{-- <div style="display:flex;gap:10px;">
                 <a id="drawerEditBtn" href="#" class="btn btn-primary"
                     style="flex:1;text-decoration:none;justify-content:center;">
-                    <i class="bi bi-pencil-square"></i> Edit Product
+                    <i class="bi bi-pencil-square"></i> Edit Items
                 </a>
                 <a id="drawerShowBtn" href="#" class="btn btn-outline"
                     style="flex:1;text-decoration:none;justify-content:center;">
-                    <i class="bi bi-eye"></i> Full Details
+                    <i class="bi bi-eye"></i> View Details
                 </a>
-            </div>
+            </div> --}}
         </div>
     </div>
 
@@ -611,9 +640,6 @@
             document.getElementById('drawerStock').textContent = data.stock + ' ' + data.unit;
             document.getElementById('drawerAlertQty').textContent = data.alert_qty + ' ' + data.unit;
 
-            // Buttons
-            document.getElementById('drawerEditBtn').href = data.edit_url;
-            document.getElementById('drawerShowBtn').href = data.show_url;
 
             // Open
             document.getElementById('drawerOverlay').classList.add('open');
