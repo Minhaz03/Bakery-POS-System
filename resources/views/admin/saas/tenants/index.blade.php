@@ -1,12 +1,12 @@
-<x-layouts.saas title="Manage Subscriptions">
+<x-layouts.saas title="Manage Tenants">
 
     <style>
         .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
-        .page-title-wrap { display: flex; align-items: center; gap: 16px; }
+        .page-header-left { display: flex; align-items: center; gap: 16px; }
         .page-header h1 { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0; }
         .page-header p { font-size: 13.5px; color: #64748b; margin: 4px 0 0 0; }
         
-        .header-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #dcfce7, #86efac); color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.5); }
+        .header-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #e0f2fe, #bae6fd); color: #0ea5e9; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.5); }
         
         .card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; overflow: hidden; margin-bottom: 24px; }
         .card-header { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; background: #fff; }
@@ -18,14 +18,7 @@
         .table td { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; vertical-align: middle; }
         .table tr:last-child td { border-bottom: none; }
         
-        .badge { padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; }
-        .badge.active { background: rgba(16,185,129,0.1); color: #047857; }
-        .badge.expired { background: rgba(239,68,68,0.1); color: #b91c1c; }
-        .badge.cancelled { background: #f1f5f9; color: #64748b; }
-        
-        .filter-bar { display: flex; gap: 12px; align-items: center; }
-        .form-control { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13.5px; width: 100%; outline: none; transition: border-color 0.2s; }
-        .form-control:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .tenant-avatar { width: 40px; height: 40px; border-radius: 10px; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; text-decoration: none; }
         .btn-outline { background: #fff; border: 1px solid #e2e8f0; color: #475569; }
@@ -33,6 +26,15 @@
         .btn-primary { background: #6366f1; color: white; }
         .btn-primary:hover { background: #4f46e5; box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
         .btn-sm { padding: 6px 12px; font-size: 12px; }
+        
+        .filter-bar { display: flex; gap: 12px; align-items: center; }
+        .form-control { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13.5px; width: 100%; outline: none; transition: border-color 0.2s; }
+        .form-control:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        
+        .badge { padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; }
+        .badge.active { background: rgba(16,185,129,0.1); color: #047857; }
+        .badge.expired { background: rgba(239,68,68,0.1); color: #b91c1c; }
+        .badge.none { background: #f1f5f9; color: #64748b; }
 
         /* ── Action Buttons ── */
         .action-btns { display: flex; gap: 6px; justify-content: flex-end; }
@@ -44,6 +46,7 @@
             transition: all 0.15s; text-decoration: none;
         }
         .btn-icon:hover { background: #6366f1; border-color: #6366f1; color: #fff; }
+        .btn-icon.danger:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
 
         /* ── Modal ── */
         .modal-overlay {
@@ -82,11 +85,11 @@
     </style>
 
     <div class="page-header">
-        <div class="page-title-wrap">
-            <div class="header-icon"><i class="bi bi-card-checklist"></i></div>
+        <div class="page-header-left">
+            <div class="header-icon"><i class="bi bi-buildings-fill"></i></div>
             <div>
-                <h1>Tenant Subscriptions</h1>
-                <p>View all active, expired, and cancelled subscriptions across the platform.</p>
+                <h1>Tenants</h1>
+                <p>Manage all registered businesses on your platform.</p>
             </div>
         </div>
     </div>
@@ -106,133 +109,131 @@
 
     <div class="card">
         <div class="card-header" style="display:flex; align-items:center;">
-            <i class="bi bi-table" style="color:#6366f1;font-size:18px;margin-right:8px;"></i>
-            <span class="card-title">Subscriptions List</span>
-            <form method="GET" action="{{ route('saas.subscriptions.index') }}" class="filter-bar" style="margin-left:auto;margin-bottom:0;">
-                <input type="text" name="search" class="form-control" placeholder="Search tenant..." value="{{ request('search') }}" style="max-width:250px;">
-                <select name="status" class="form-control" style="max-width:160px;">
-                    <option value="">All Statuses</option>
-                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                </select>
+            <i class="bi bi-shop-window" style="color:#6366f1;font-size:18px;margin-right:8px;"></i>
+            <span class="card-title">Tenant Directory</span>
+            <form method="GET" action="{{ route('saas.tenants.index') }}" class="filter-bar" style="margin-left:auto;margin-bottom:0;">
+                <input type="text" name="search" class="form-control" placeholder="Search tenant name..." value="{{ request('search') }}" style="max-width:250px;">
                 <button type="submit" class="btn btn-outline btn-sm"><i class="bi bi-search"></i> Search</button>
-                @if(request()->hasAny(['search','status']))
-                    <a href="{{ route('saas.subscriptions.index') }}" class="btn btn-outline btn-sm" style="color:#ef4444;"><i class="bi bi-x-lg"></i></a>
+                @if(request()->has('search'))
+                    <a href="{{ route('saas.tenants.index') }}" class="btn btn-outline btn-sm" style="color:#ef4444;"><i class="bi bi-x-lg"></i></a>
                 @endif
             </form>
         </div>
+
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Tenant</th>
-                        <th>Plan</th>
-                        <th>Status</th>
-                        <th>Starts At</th>
-                        <th>Ends At</th>
+                        <th>Business</th>
+                        <th>Domain / Subdomain</th>
+                        <th>Current Plan</th>
+                        <th>Registration Date</th>
                         <th style="text-align:right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($subscriptions as $sub)
+                    @forelse($tenants as $tenant)
+                    @php
+                        $activeSub = $tenant->subscriptions->first();
+                    @endphp
                     <tr>
-                        <td style="color:#94a3b8;">#{{ $sub->id }}</td>
-                        <td style="font-weight:600;">{{ $sub->tenant->name ?? 'N/A' }}</td>
-                        <td>{{ $sub->plan->name ?? 'N/A' }} <br>
-                            <small style="color:#64748b;">{{ number_format($sub->plan->price ?? 0, 2) }} / {{ $sub->plan->billing_cycle ?? 'month' }}</small>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div class="tenant-avatar"><i class="bi bi-shop"></i></div>
+                                <div>
+                                    <div style="font-weight:700;color:#0f172a;">{{ $tenant->name }}</div>
+                                    <div style="font-size:12.5px;color:#64748b;">ID: {{ $tenant->id }}</div>
+                                </div>
+                            </div>
                         </td>
                         <td>
-                            <span class="badge {{ $sub->status }}">{{ ucfirst($sub->status) }}</span>
+                            <span style="font-weight:600;color:#334155;">{{ $tenant->domain ?: 'N/A' }}</span>
                         </td>
-                        <td style="font-size:12.5px; color:#64748b;">{{ $sub->starts_at ? $sub->starts_at->format('d M Y') : 'N/A' }}</td>
-                        <td style="font-size:12.5px; color:#64748b;">
-                            {{ $sub->ends_at ? $sub->ends_at->format('d M Y') : 'N/A' }}
-                            @if($sub->ends_at && $sub->ends_at < now() && $sub->status == 'active')
-                                <i class="bi bi-exclamation-triangle-fill text-danger" title="Expired"></i>
+                        <td>
+                            @if($activeSub)
+                                <span style="font-weight:600;color:#0f172a;">{{ $activeSub->plan->name ?? 'Unknown' }}</span>
+                                <div style="margin-top:4px;">
+                                    <span class="badge active">Active</span>
+                                </div>
+                            @else
+                                <span class="badge none">No Active Plan</span>
                             @endif
                         </td>
                         <td>
+                            {{ $tenant->created_at->format('M d, Y') }}
+                        </td>
+                        <td>
                             <div class="action-btns">
-                                <a href="{{ route('saas.subscriptions.show', $sub->id) }}" class="btn-icon" title="View Details">
+                                <a href="{{ route('saas.tenants.show', $tenant->id) }}" class="btn-icon" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <button type="button" class="btn-icon" title="Edit Subscription"
-                                    onclick="openEditModal({{ $sub->id }}, '{{ addslashes($sub->tenant->name ?? 'N/A') }}', {{ $sub->plan_id ?? 'null' }}, '{{ $sub->status }}', '{{ $sub->starts_at ? $sub->starts_at->format('Y-m-d') : '' }}', '{{ $sub->ends_at ? $sub->ends_at->format('Y-m-d') : '' }}')">
+                                <button type="button" class="btn-icon" title="Edit Tenant"
+                                    onclick="openEditModal({{ $tenant->id }}, '{{ addslashes($tenant->name) }}', '{{ addslashes($tenant->domain) }}')">
                                     <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn-icon danger" title="Delete Tenant"
+                                    onclick="confirmDelete({{ $tenant->id }}, '{{ addslashes($tenant->name) }}')">
+                                    <i class="bi bi-trash"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" style="text-align:center;padding:48px;color:#94a3b8;">
-                            <i class="bi bi-card-list" style="font-size:36px;display:block;margin-bottom:10px;"></i>
-                            <div>No subscriptions found.</div>
+                        <td colspan="5" style="text-align:center;padding:40px;color:#64748b;">
+                            <i class="bi bi-buildings" style="font-size:32px;color:#cbd5e1;display:block;margin-bottom:12px;"></i>
+                            No tenants found.
                         </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        @if($subscriptions->hasPages())
-        <div style="padding:14px 22px;border-top:1px solid #f1f5f9;">
-            {{ $subscriptions->links() }}
+        
+        @if($tenants->hasPages())
+        <div style="padding:16px 24px;border-top:1px solid #f1f5f9;">
+            {{ $tenants->links() }}
         </div>
         @endif
     </div>
 
-    {{-- EDIT SUBSCRIPTION MODAL --}}
-    <div class="modal-overlay" id="editSubModal">
+    {{-- EDIT TENANT MODAL --}}
+    <div class="modal-overlay" id="editTenantModal">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-header-icon" style="background:rgba(99,102,241,0.1);color:#6366f1;">
                     <i class="bi bi-pencil-square"></i>
                 </div>
                 <div>
-                    <div class="modal-title">Edit Subscription</div>
-                    <div class="modal-sub" id="editSubTitle">Update details</div>
+                    <div class="modal-title">Edit Tenant</div>
+                    <div class="modal-sub" id="editTenantTitle">Update details</div>
                 </div>
-                <button class="modal-close" type="button" onclick="closeModal('editSubModal')"><i class="bi bi-x-lg"></i></button>
+                <button class="modal-close" type="button" onclick="closeModal('editTenantModal')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <form method="POST" id="editSubForm">
+            <form method="POST" id="editTenantForm">
                 @csrf @method('PUT')
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label">Plan *</label>
-                        <select name="plan_id" id="editPlan" class="form-control" required>
-                            @foreach($plans as $plan)
-                                <option value="{{ $plan->id }}">{{ $plan->name }} (${{ $plan->price }}/{{ $plan->billing_cycle }})</option>
-                            @endforeach
-                        </select>
+                        <label class="form-label">Business Name *</label>
+                        <input type="text" name="name" id="editName" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Status *</label>
-                        <select name="status" id="editStatus" class="form-control" required>
-                            <option value="active">Active</option>
-                            <option value="expired">Expired</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
-                    <div style="display:flex; gap:16px;">
-                        <div class="form-group" style="flex:1;">
-                            <label class="form-label">Starts At *</label>
-                            <input type="date" name="starts_at" id="editStartsAt" class="form-control" required>
-                        </div>
-                        <div class="form-group" style="flex:1;">
-                            <label class="form-label">Ends At *</label>
-                            <input type="date" name="ends_at" id="editEndsAt" class="form-control" required>
-                        </div>
+                        <label class="form-label">Domain / Subdomain</label>
+                        <input type="text" name="domain" id="editDomain" class="form-control" placeholder="e.g. bakery1.pos.com">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" onclick="closeModal('editSubModal')">Cancel</button>
+                    <button type="button" class="btn btn-outline" onclick="closeModal('editTenantModal')">Cancel</button>
                     <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
+
+    {{-- Hidden delete form --}}
+    <form id="deleteTenantForm" method="POST" style="display:none;">
+        @csrf @method('DELETE')
+    </form>
 
     <script>
         function openModal(id)  { document.getElementById(id).classList.add('open'); }
@@ -244,16 +245,32 @@
             });
         });
 
-        function openEditModal(id, tenantName, planId, status, startsAt, endsAt) {
-            document.getElementById('editSubForm').action = '/saas/subscriptions/' + id;
-            document.getElementById('editSubTitle').textContent = 'Editing subscription for ' + tenantName;
+        function openEditModal(id, name, domain) {
+            document.getElementById('editTenantForm').action = '/saas/tenants/' + id;
+            document.getElementById('editTenantTitle').textContent = 'Editing: ' + name;
             
-            document.getElementById('editPlan').value = planId;
-            document.getElementById('editStatus').value = status;
-            document.getElementById('editStartsAt').value = startsAt;
-            document.getElementById('editEndsAt').value = endsAt;
+            document.getElementById('editName').value = name;
+            document.getElementById('editDomain').value = domain;
             
-            openModal('editSubModal');
+            openModal('editTenantModal');
+        }
+
+        function confirmDelete(id, name) {
+            Swal.fire({
+                title: 'Delete Tenant?',
+                html: `Are you sure you want to delete <strong>${name}</strong>? This action cannot be undone and will delete all associated data.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Yes, delete it',
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('deleteTenantForm');
+                    form.action = '/saas/tenants/' + id;
+                    form.submit();
+                }
+            });
         }
     </script>
 </x-layouts.saas>

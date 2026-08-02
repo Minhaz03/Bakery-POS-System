@@ -24,7 +24,28 @@ class SubscriptionController extends Controller
             });
         }
 
+        $plans = \App\Models\Plan::all();
         $subscriptions = $query->latest()->paginate(15);
-        return view('admin.saas.subscriptions.index', compact('subscriptions'));
+        return view('admin.saas.subscriptions.index', compact('subscriptions', 'plans'));
+    }
+
+    public function show(Subscription $subscription): View
+    {
+        $subscription->load(['tenant.users', 'plan']);
+        return view('admin.saas.subscriptions.show', compact('subscription'));
+    }
+
+    public function update(Request $request, Subscription $subscription)
+    {
+        $validated = $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+            'status' => 'required|in:active,expired,cancelled',
+            'starts_at' => 'required|date',
+            'ends_at' => 'required|date|after_or_equal:starts_at',
+        ]);
+
+        $subscription->update($validated);
+
+        return redirect()->back()->with('success', 'Subscription updated successfully.');
     }
 }

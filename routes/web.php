@@ -245,10 +245,14 @@ Route::prefix('saas')->name('saas.')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:admin')->group(function () {
-        Route::get('/', function () {
-            return redirect()->route('saas.subscriptions.index');
-        });
-        Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+        Route::get('/', [App\Http\Controllers\Saas\DashboardController::class, 'index'])->name('dashboard');
+        
+        // SaaS Global Settings
+        Route::get('settings', [App\Http\Controllers\Saas\SettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [App\Http\Controllers\Saas\SettingController::class, 'store'])->name('settings.store');
+        
+        Route::resource('tenants', App\Http\Controllers\Saas\TenantController::class)->except(['create', 'edit']);
+        Route::resource('subscriptions', SubscriptionController::class)->only(['index', 'show', 'update']);
         Route::resource('plans', PlanController::class)->except(['show']);
         Route::get('users', [App\Http\Controllers\Saas\UserController::class, 'index'])->name('users.index');
         Route::get('users/{user}', [App\Http\Controllers\Saas\UserController::class, 'show'])->name('users.show');
