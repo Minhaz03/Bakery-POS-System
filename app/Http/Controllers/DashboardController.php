@@ -22,7 +22,7 @@ class DashboardController extends Controller
         $todaysSales = Sale::whereDate('created_at', Carbon::today())->sum('grand_total');
 
         // 2. Production Today (sum of produced_qty for batches completed today)
-        $productionToday = ProductionBatch::whereDate('created_at', Carbon::today())->sum('produced_qty');
+        $productionToday = ProductionBatch::whereDate('created_at', Carbon::today())->sum('qty');
 
         // 3. Low Stock Alerts
         $lowStockAlerts = Product::whereColumn('stock_qty', '<=', 'alert_qty')->count();

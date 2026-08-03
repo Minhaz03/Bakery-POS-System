@@ -13,7 +13,7 @@ class ProductionBatch extends Model
     protected $fillable = [
         'production_order_id',
         'batch_number',
-        'produced_qty',
+        'qty',
         'manufacturing_date',
         'expiry_date',
     ];
