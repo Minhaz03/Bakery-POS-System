@@ -282,16 +282,15 @@
         <div class="card-body" style="padding:0;overflow-x:auto;">
             <table style="width:100%;border-collapse:collapse;text-align:left;font-size:13.5px;">
                 <thead>
-                    <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600">
-                        <th style="padding:16px 20px;white-space:nowrap;text-align:left;">Product</th>
-                        <th style="padding:16px 20px;text-align:center;white-space:nowrap;">SKU</th>
-                        <th style="padding:16px 20px;text-align:center;white-space:nowrap;">Barcode Scan QR</th>
-                        <th style="padding:16px 20px;text-align:center;white-space:nowrap;">Category</th>
-                        <th style="padding:16px 20px;text-align:center;white-space:nowrap;">Type</th>
-                        <th style="padding:16px 20px;text-align:right;white-space:nowrap;">Sale Price</th>
-                        <th style="padding:16px 20px;text-align:center;white-space:nowrap;">Stock Qty</th>
-                        <th style="padding:16px 20px;text-align:center;white-space:nowrap;">Stock Status</th>
-                        <th style="padding:16px 20px;text-align:center;white-space:nowrap;">Actions</th>
+                    <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;">
+                        <th style="padding:16px 20px; text-align: left;">Product</th>
+                        <th style="padding:16px 20px; text-align: center;">QR Code</th>
+                        <th style="padding:16px 20px; text-align: left;">Category & Brand</th>
+                        <th style="padding:16px 20px; text-align: center;">Type</th>
+                        <th style="padding:16px 20px; text-align: right;">Pricing</th>
+                        <th style="padding:16px 20px; text-align: center;">Stock</th>
+                        <th style="padding:16px 20px; text-align: center;">Status</th>
+                        <th style="padding:16px 20px; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody style="color:#334155;">
@@ -299,119 +298,107 @@
                         <tr style="border-bottom:1px solid #f1f5f9;transition:background 0.15s;"
                             onmouseover="this.style.background='#f8fafc'"
                             onmouseout="this.style.background='transparent'">
-
-                            {{-- Product --}}
-                            <td style="padding:14px 20px;vertical-align:middle;">
-                                <div style="display:flex;align-items:center;gap:12px;">
+                            
+                            <!-- Product (Image, Name, SKU, Barcode) -->
+                            <td style="padding:14px 20px; vertical-align: middle;">
+                                <div style="display:flex;align-items:center;gap:16px;">
                                     @if ($item->image)
-                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
-                                            style="width:44px;height:44px;border-radius:9px;object-fit:cover;border:1px solid #e2e8f0;">
+                                        <img src="{{ asset('storage/' . $item->image) }}"
+                                            alt="{{ $item->name }}"
+                                            style="width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
                                     @else
-                                        <div
-                                            style="width:44px;height:44px;border-radius:9px;background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.12));color:#6366f1;display:flex;align-items:center;justify-content:center;font-size:20px;">
+                                        <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.12));color:#6366f1;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #e2e8f0;">
                                             <i class="bi bi-bag-fill"></i>
                                         </div>
                                     @endif
-                                    <div>
-                                        <span
-                                            style="font-weight:700;color:#0f172a;display:block;">{{ $item->name }}</span>
-                                        @if ($item->barcode)
-                                            <span style="font-size:11px;color:#94a3b8;font-family:monospace;"><i
-                                                    class="bi bi-upc-scan"></i> {{ $item->barcode }}</span>
-                                        @endif
+                                    <div style="display:flex;flex-direction:column;gap:4px;">
+                                        <span style="font-weight:700;color:#0f172a;font-size:14.5px;">{{ $item->name }}</span>
+                                        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b;font-family:monospace;">
+                                            <span title="SKU"><i class="bi bi-upc"></i> {{ $item->sku }}</span>
+                                            @if($item->barcode)
+                                                <span style="color:#cbd5e1;">|</span>
+                                                <span title="Barcode"><i class="bi bi-upc-scan"></i> {{ $item->barcode }}</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>
 
-                            {{-- SKU --}}
-                            <td style="padding:14px 20px;text-align:center;vertical-align:middle;">
-                                <span
-                                    style="font-family:monospace;color:#475569;font-weight:600;font-size:12.5px;">{{ $item->sku }}</span>
-                            </td>
-
-                            {{-- Barcode Scan QR --}}
-                            <td style="padding:14px 20px;text-align:center;vertical-align:middle;">
+                            <!-- QR Code -->
+                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
                                 @if ($item->barcode)
-                                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data={{ urlencode($item->barcode) }}"
-                                            alt="QR Code"
-                                            style="width:40px;height:40px;border:1px solid #e2e8f0;padding:2px;border-radius:4px;background:#fff;"
-                                            title="Scan Barcode: {{ $item->barcode }}">
-                                        <span style="font-size:11px;color:#64748b;font-family:monospace;"><i
-                                                class="bi bi-upc-scan"></i> {{ $item->barcode }}</span>
-                                    </div>
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ urlencode($item->barcode) }}"
+                                        alt="QR Code"
+                                        style="width:36px;height:36px;border:1px solid #e2e8f0;padding:2px;border-radius:4px;background:#fff;"
+                                        title="Scan Barcode: {{ $item->barcode }}">
                                 @else
-                                    <span style="color:#94a3b8;font-size:12px;">N/A</span>
+                                    <span style="color:#94a3b8;font-size:12px;">-</span>
                                 @endif
                             </td>
 
-                            {{-- Category --}}
-                            <td style="padding:14px 20px;text-align:center;vertical-align:middle;">
-                                <span
-                                    style="background:#f1f5f9;color:#475569;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600;">
-                                    {{ $item->category?->name ?? 'N/A' }}
-                                </span>
+                            <!-- Category & Brand -->
+                            <td style="padding:14px 20px; vertical-align: middle;">
+                                <div style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-weight:600;color:#334155;font-size:13.5px;">{{ $item->category?->name ?? 'Uncategorized' }}</span>
+                                    <span style="font-size:12px;color:#64748b;">{{ $item->brand?->name ?? 'No Brand' }}</span>
+                                </div>
                             </td>
 
-                            {{-- Type --}}
-                            <td style="padding:14px 20px;text-align:center;vertical-align:middle;">
-                                @if ($item->product_type === 'ready_made')
-                                    <span
-                                        style="background:#e0e7ff;color:#4f46e5;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">Ready
-                                        Made</span>
+                            <!-- Type -->
+                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
+                                @if ($item->product_type === 'raw_material')
+                                    <span style="background:#fef3c7;color:#d97706;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;">Raw Material</span>
+                                @elseif($item->product_type === 'ready_made')
+                                    <span style="background:#e0e7ff;color:#4f46e5;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;">Ready Made</span>
                                 @elseif($item->product_type === 'finished_product')
-                                    <span
-                                        style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">Finished
-                                        Product</span>
+                                    <span style="background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;">Finished Product</span>
                                 @else
-                                    <span
-                                        style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">{{ ucwords(str_replace('_', ' ', $item->product_type)) }}</span>
+                                    <span style="color:#94a3b8;font-size:12px;">-</span>
                                 @endif
                             </td>
 
-                            {{-- Sale Price --}}
-                            <td
-                                style="padding:14px 20px;text-align:right;vertical-align:middle;font-weight:700;color:#0f172a;font-size:14px;">
-                                &#2547; {{ number_format($item->sale_price, 2) }}
+                            <!-- Pricing -->
+                            <td style="padding:14px 20px; text-align: right; vertical-align: middle;">
+                                <div style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-weight:700;color:#0f172a;font-size:14.5px;">&#2547; {{ number_format($item->sale_price, 2) }}</span>
+                                    <span style="font-size:12px;color:#64748b;" title="Cost Price">Cost: &#2547; {{ number_format($item->cost_price, 2) }}</span>
+                                </div>
                             </td>
 
-                            {{-- Stock Qty --}}
-                            <td
-                                style="padding:14px 20px;text-align:center;vertical-align:middle;font-weight:600;color:#334155;">
-                                {{ floatval($item->stock_qty) }} {{ $item->unit?->short_name ?? 'pcs' }}
+                            <!-- Stock -->
+                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                                    <span style="font-weight:700;color:#0f172a;font-size:14.5px;">{{ floatval($item->stock_qty) }}</span>
+                                    <span style="font-size:11px;color:#64748b;text-transform:uppercase;font-weight:600;">{{ $item->unit?->short_name ?? 'pcs' }}</span>
+                                </div>
                             </td>
 
-                            {{-- Stock Status Toggle --}}
-                            <td style="padding:14px 20px;text-align:center;vertical-align:middle;">
-                                <form action="{{ route('dashboard.products.toggle-stock', $item) }}" method="POST"
-                                    style="margin:0;display:inline-block;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <label class="status-toggle-switch"
-                                        title="{{ $item->stock_qty > 0 ? 'Click to mark Out of Stock' : 'Click to mark In Stock' }}">
-                                        <input type="checkbox" onchange="this.form.submit()"
-                                            {{ $item->stock_qty > 0 ? 'checked' : '' }}>
-                                        <span class="status-toggle-slider"></span>
-                                    </label>
-                                </form>
-                                <div style="margin-top:4px;">
+                            <!-- Status -->
+                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                                    <form action="{{ route('dashboard.products.toggle-stock', $item) }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <label class="status-toggle-switch">
+                                            <input type="checkbox" onchange="this.form.submit()"
+                                                {{ $item->stock_qty > 0 ? 'checked' : '' }}>
+                                            <span class="status-toggle-slider"></span>
+                                        </label>
+                                    </form>
                                     @if ($item->stock_qty <= 0)
-                                        <span style="color:#b91c1c;font-size:11px;font-weight:600;"><i
-                                                class="bi bi-x-circle-fill"></i> Out of Stock</span>
+                                        <span style="color:#ef4444;font-size:10px;font-weight:700;background:#fee2e2;padding:2px 6px;border-radius:10px;text-transform:uppercase;">Out of Stock</span>
                                     @elseif($item->stock_qty <= $item->alert_qty)
-                                        <span style="color:#d97706;font-size:11px;font-weight:600;"><i
-                                                class="bi bi-exclamation-triangle-fill"></i> Low Stock</span>
+                                        <span style="color:#d97706;font-size:10px;font-weight:700;background:#fef3c7;padding:2px 6px;border-radius:10px;text-transform:uppercase;">Low Stock</span>
                                     @else
-                                        <span style="color:#15803d;font-size:11px;font-weight:600;"><i
-                                                class="bi bi-check-circle-fill"></i> In Stock</span>
+                                        <span style="color:#10b981;font-size:10px;font-weight:700;background:#d1fae5;padding:2px 6px;border-radius:10px;text-transform:uppercase;">In Stock</span>
                                     @endif
                                 </div>
                             </td>
 
-                            {{-- Actions --}}
-                            <td style="padding:14px 20px;text-align:center;vertical-align:middle;font-size:16px;">
+                            <!-- Actions -->
+                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
                                 <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-                                    {{-- View Details btn --}}
+                                    <!-- View Details btn -->
                                     <button type="button" class="btn-view-details"
                                         onclick="openDrawer({{ json_encode([
                                             'id' => $item->id,
@@ -435,12 +422,12 @@
                                         <i class="bi bi-eye"></i> View
                                     </button>
 
-                                    {{-- Edit --}}
+                                    <!-- Edit -->
                                     <a href="{{ route('dashboard.pos-items.edit', $item) }}"
                                         title="Edit Item"
-                                        style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1.5px solid #e0e7ff;background:#f5f3ff;color:#6366f1;font-size:12px;font-weight:600;text-decoration:none;transition:background 0.15s,border-color 0.15s,box-shadow 0.15s,transform 0.12s;"
-                                        onmouseover="this.style.background='#6366f1';this.style.color='#fff';this.style.borderColor='#6366f1';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.28)';this.style.transform='translateY(-1px)';"
-                                        onmouseout="this.style.background='#f5f3ff';this.style.color='#6366f1';this.style.borderColor='#e0e7ff';this.style.boxShadow='none';this.style.transform='translateY(0)';">
+                                        style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1.5px solid #e0e7ff;background:#f5f3ff;color:#6366f1;font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s;"
+                                        onmouseover="this.style.background='#6366f1';this.style.color='#fff';this.style.borderColor='#6366f1';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.28)';"
+                                        onmouseout="this.style.background='#f5f3ff';this.style.color='#6366f1';this.style.borderColor='#e0e7ff';this.style.boxShadow='none';">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </a>
                                 </div>

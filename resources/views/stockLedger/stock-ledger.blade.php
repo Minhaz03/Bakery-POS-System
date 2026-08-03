@@ -189,8 +189,8 @@
                                     @endif
                                 </td>
                                 <td
-                                    style="padding:14px 20px;text-align:center;font-weight:700;color:{{ $row->qty > 0 ? '#16a34a' : '#dc2626' }}">
-                                    {{ $row->qty > 0 ? '+' : '' }}{{ number_format($row->qty, 2) }}
+                                    style="padding:14px 20px;text-align:center;font-weight:700;color:{{ $row->quantity > 0 ? '#16a34a' : '#dc2626' }}">
+                                    {{ $row->quantity > 0 ? '+' : '' }}{{ number_format($row->quantity, 2) }}
                                 </td>
                                 <td style="padding:14px 20px;"><i class="bi bi-person-fill" style="color:#64748b;"></i>
                                     {{ $row->user?->name ?? 'System' }}</td>

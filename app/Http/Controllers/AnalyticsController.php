@@ -74,6 +74,6 @@ class AnalyticsController extends Controller
             ]
         ];
 
-        return view('dashboard.analytics', compact('analytics', 'days'));
+        return view('dashboard.analytics.index', compact('analytics', 'days'));
     }
 }

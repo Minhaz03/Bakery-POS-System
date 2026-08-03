@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use App\Models\Sale;
 use App\Models\Product;
 use App\Models\ProductionBatch;
+use App\Models\ProductionOrder;
 use App\Models\CustomOrder;
 use Carbon\Carbon;
 
@@ -20,8 +21,8 @@ class DashboardController extends Controller
         // 1. Today's Sales
         $todaysSales = Sale::whereDate('created_at', Carbon::today())->sum('grand_total');
 
-        // 2. Production Today
-        $productionToday = ProductionBatch::whereDate('created_at', Carbon::today())->sum('qty');
+        // 2. Production Today (sum of produced_qty for batches completed today)
+        $productionToday = ProductionBatch::whereDate('created_at', Carbon::today())->sum('produced_qty');
 
         // 3. Low Stock Alerts
         $lowStockAlerts = Product::whereColumn('stock_qty', '<=', 'alert_qty')->count();
@@ -48,8 +49,8 @@ class DashboardController extends Controller
         // 6. Recent Sales
         $recentSales = Sale::with('customer')->orderBy('created_at', 'desc')->take(5)->get();
 
-        // 7. Today's Production Schedule
-        $productionSchedule = ProductionBatch::with('recipe')->whereDate('scheduled_at', Carbon::today())->take(5)->get();
+        // 7. Today's Production Schedule (orders planned for today)
+        $productionSchedule = ProductionOrder::with('recipe')->whereDate('planned_date', Carbon::today())->take(5)->get();
 
         // 8. Top Selling Products
         $topProducts = \App\Models\SaleItem::with('product')
@@ -62,6 +63,9 @@ class DashboardController extends Controller
         // 9. Low Stock Items List
         $lowStockItems = Product::whereColumn('stock_qty', '<=', 'alert_qty')->take(5)->get();
 
+        // 10. Check if system is initialized (e.g. has products)
+        $hasProducts = Product::exists();
+
         return view('dashboard', compact(
             'todaysSales',
             'productionToday',
@@ -71,7 +75,8 @@ class DashboardController extends Controller
             'recentSales',
             'productionSchedule',
             'topProducts',
-            'lowStockItems'
+            'lowStockItems',
+            'hasProducts'
         ));
     }
 }

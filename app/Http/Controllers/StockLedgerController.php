@@ -37,7 +37,7 @@ class StockLedgerController extends Controller
 
         $products = Product::orderBy('name')->get();
 
-        return view('dashboard.stock-ledger', compact('ledger', 'products'));
+        return view('stockLedger.stock-ledger', compact('ledger', 'products'));
     }
 
     /**
@@ -70,13 +70,24 @@ class StockLedgerController extends Controller
         $newStock = $product->stock_qty + $signedQty;
         $product->update(['stock_qty' => $newStock]);
 
+        // Create StockAdjustment
+        $adjustment = \App\Models\StockAdjustment::create([
+            'product_id' => $product->id,
+            'quantity' => abs($signedQty),
+            'type' => $signedQty >= 0 ? 'addition' : 'deduction',
+            'reason' => $validated['notes'],
+            'user_id' => auth()->id(),
+        ]);
+
         // Log to stock ledger
         StockLedger::create([
             'product_id' => $product->id,
             'type' => $type,
-            'qty' => $signedQty,
+            'quantity' => $signedQty,
             'user_id' => auth()->id(),
             'notes' => $validated['notes'],
+            'reference_id' => $adjustment->id,
+            'reference_type' => \App\Models\StockAdjustment::class,
         ]);
 
         return redirect()->back()->with('success', 'Stock adjusted successfully! Product: ' . $product->name . ', New Stock: ' . number_format($newStock, 2));
@@ -113,7 +124,7 @@ class StockLedgerController extends Controller
                     $row->product?->sku ?? 'N/A',
                     $row->product?->name ?? 'N/A',
                     $row->type,
-                    ($row->qty > 0 ? '+' : '') . number_format($row->qty, 2),
+                    ($row->quantity > 0 ? '+' : '') . number_format($row->quantity, 2),
                     $row->user?->name ?? 'System/Unknown',
                     $row->created_at->format('Y-m-d h:i A'),
                     $row->notes ?? ''

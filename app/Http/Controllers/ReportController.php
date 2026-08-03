@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Sale;
 use App\Models\Purchase;
 use App\Models\Product;
-use App\Models\ProductionBatch;
+use App\Models\ProductionOrder;
 use Carbon\Carbon;
 
 class ReportController extends Controller
@@ -96,27 +96,27 @@ class ReportController extends Controller
 
     public function productionReport(Request $request)
     {
-        $query = ProductionBatch::with('recipe.product')->orderBy('created_at', 'desc');
+        $query = ProductionOrder::with('recipe', 'creator')->orderBy('created_at', 'desc');
 
         if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
+            $query->whereDate('planned_date', '>=', $request->start_date);
         }
         if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
+            $query->whereDate('planned_date', '<=', $request->end_date);
         }
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        $batches = $query->get();
+        $orders = $query->get();
 
         $summary = [
-            'total_batches' => $batches->count(),
-            'total_produced_qty' => $batches->where('status', 'Completed')->sum('qty'),
-            'total_wastage_qty' => $batches->where('status', 'Completed')->sum('wastage_qty'),
+            'total_orders'        => $orders->count(),
+            'total_produced_qty'  => $orders->where('status', 'completed')->sum('actual_quantity'),
+            'total_planned_qty'   => $orders->sum('planned_quantity'),
         ];
 
-        return view('dashboard.reports.production', compact('batches', 'summary'));
+        return view('dashboard.reports.production', compact('orders', 'summary'));
     }
 
     public function profitLossReport(Request $request)

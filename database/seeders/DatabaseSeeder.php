@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -23,18 +22,18 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             SettingsSeeder::class,
             UnitSeeder::class,
-            BrandSeeder::class,
-            TaxSeeder::class,
-            CategorySeeder::class,
-            SupplierSeeder::class,
-            CustomerSeeder::class,
-            ProductSeeder::class,
-            StockLedgerSeeder::class,
-            PurchaseSeeder::class,
-            RecipeSeeder::class,
-            ProductionBatchSeeder::class,
-            SaleSeeder::class,
-            CustomOrderSeeder::class,
+            // BrandSeeder::class,
+            // TaxSeeder::class,
+            // CategorySeeder::class,
+            // SupplierSeeder::class,
+            // CustomerSeeder::class,
+            // ProductSeeder::class,
+            // StockLedgerSeeder::class,
+            // PurchaseSeeder::class,
+            // RecipeSeeder::class,
+            // ProductionBatchSeeder::class,
+            // SaleSeeder::class,
+            // CustomOrderSeeder::class,
         ]);
     }
 }

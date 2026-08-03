@@ -28,7 +28,7 @@ class CustomOrderController extends Controller
 
         $customers = \App\Models\Customer::orderBy('name')->get();
 
-        return view('dashboard.custom-orders', compact('orders', 'customers'));
+        return view('dashboard.custom-orders.index', compact('orders', 'customers'));
     }
 
     /**
@@ -69,7 +69,7 @@ class CustomOrderController extends Controller
      */
     public function show(\App\Models\CustomOrder $order): View
     {
-        return view('dashboard.custom-orders-show', compact('order'));
+        return view('dashboard.custom-orders.show', compact('order'));
     }
 
     /**
@@ -77,7 +77,7 @@ class CustomOrderController extends Controller
      */
     public function print(\App\Models\CustomOrder $order): View
     {
-        return view('dashboard.custom-orders-print', compact('order'));
+        return view('dashboard.custom-orders.print', compact('order'));
     }
 
     /**

@@ -40,7 +40,7 @@ class PosController extends Controller
         $categories = collect($posItems)->pluck('category')->unique()->values()->toArray();
         $customers = Customer::where('is_active', true)->orderBy('name')->get();
 
-        return view('dashboard.pos-terminal', compact('posItems', 'categories', 'customers'));
+        return view('dashboard.pos-terminal.index', compact('posItems', 'categories', 'customers'));
     }
 
     /**
@@ -120,7 +120,7 @@ class PosController extends Controller
                 StockLedger::create([
                     'product_id' => $product->id,
                     'type'       => 'out',
-                    'qty'        => $item['qty'],
+                    'quantity'   => $item['qty'],
                     'user_id'    => auth()->id(),
                     'notes'      => 'POS Sale - ' . $sale->invoice_no,
                 ]);

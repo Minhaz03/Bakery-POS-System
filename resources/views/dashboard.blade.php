@@ -1,4 +1,20 @@
 <x-layouts.admin title="Dashboard">
+    @if(!$hasProducts)
+    <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 12px; padding: 24px; color: #fff; margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);">
+        <div>
+            <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;">Welcome to your POS System! 🎉</h2>
+            <p style="margin: 0; font-size: 14.5px; opacity: 0.9;">Your dashboard is currently empty. Let's get started by adding your first products and categories so you can start selling.</p>
+        </div>
+        <div style="display: flex; gap: 12px; flex-shrink: 0;">
+            <a href="{{ route('dashboard.categories.create') }}" style="background: rgba(255,255,255,0.2); color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600; text-decoration: none; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.3);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                1. Add Category
+            </a>
+            <a href="{{ route('dashboard.products.create') }}" style="background: #fff; color: #4f46e5; padding: 10px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 12px -2px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.1)'">
+                2. Add Product
+            </a>
+        </div>
+    </div>
+    @endif
 
     <!-- KPI Cards -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:28px;">
@@ -121,12 +137,12 @@
                                     <i class="bi bi-box-seam"></i>
                                 </div>
                                 <div>
-                                    <div style="font-weight:600;color:#1e293b;font-size:14px;letter-spacing:-0.2px;">{{ $batch->batch_code }}</div>
+                                     <div style="font-weight:600;color:#1e293b;font-size:14px;letter-spacing:-0.2px;">{{ $batch->reference_no }}</div>
                                     <div style="font-size:12.5px;color:#64748b;margin-top:2px;">{{ $batch->recipe ? $batch->recipe->name : 'Unknown Recipe' }}</div>
                                 </div>
                             </div>
                             <div style="text-align:right;">
-                                <div style="font-weight:700;color:#0f172a;font-size:14.5px;letter-spacing:-0.3px;">{{ $batch->qty }} units</div>
+                                <div style="font-weight:700;color:#0f172a;font-size:14.5px;letter-spacing:-0.3px;">{{ $batch->planned_quantity }} units</div>
                                 <div style="margin-top:2px;">
                                     <span style="font-size:11px;padding:3px 8px;border-radius:12px;font-weight:600;
                                         @if($batch->status == 'completed') background:#dcfce7;color:#166534;

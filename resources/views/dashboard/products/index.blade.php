@@ -124,40 +124,15 @@
         <div class="card-body" style="padding:0;overflow-x:auto;">
             <table style="width:100%;border-collapse:collapse;text-align:left;font-size:13.5px;">
                 <thead>
-                    <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600">
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: left; overflow-wrap: break-word;">
-                            Product Details</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            SKU</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            Barcode Scan QR</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            Category</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            Type</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            Brand</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: right; overflow-wrap: break-word;">
-                            Cost Price</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: right; overflow-wrap: break-word;">
-                            Sale Price</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            Stock Qty</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            Status</th>
-                        <th
-                            style="padding:16px 20px; white-space: normal; vertical-align: middle; text-align: center; overflow-wrap: break-word;">
-                            Actions</th>
+                    <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;">
+                        <th style="padding:16px 20px; text-align: left;">Product</th>
+                        <th style="padding:16px 20px; text-align: center;">QR Code</th>
+                        <th style="padding:16px 20px; text-align: left;">Category & Brand</th>
+                        <th style="padding:16px 20px; text-align: center;">Type</th>
+                        <th style="padding:16px 20px; text-align: right;">Pricing</th>
+                        <th style="padding:16px 20px; text-align: center;">Stock</th>
+                        <th style="padding:16px 20px; text-align: center;">Status</th>
+                        <th style="padding:16px 20px; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody style="color:#334155;">
@@ -165,105 +140,113 @@
                         <tr style="border-bottom:1px solid #f1f5f9;transition:background 0.15s;"
                             onmouseover="this.style.background='#f8fafc'"
                             onmouseout="this.style.background='transparent'">
+                            
+                            <!-- Product (Image, Name, SKU, Barcode) -->
                             <td style="padding:14px 20px; vertical-align: middle;">
-                                <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="display:flex;align-items:center;gap:16px;">
                                     @if ($product->image)
                                         <img src="{{ asset('storage/' . $product->image) }}"
                                             alt="{{ $product->name }}"
-                                            style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid #e2e8f0;">
+                                            style="width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
                                     @else
-                                        <div
-                                            style="width:40px;height:40px;border-radius:8px;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;font-size:18px;">
+                                        <div style="width:48px;height:48px;border-radius:8px;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #e2e8f0;">
                                             <i class="bi bi-image"></i>
                                         </div>
                                     @endif
-                                    <div>
-                                        <span
-                                            style="font-weight:700;color:#0f172a;display:block;">{{ $product->name }}</span>
+                                    <div style="display:flex;flex-direction:column;gap:4px;">
+                                        <span style="font-weight:700;color:#0f172a;font-size:14.5px;">{{ $product->name }}</span>
+                                        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b;font-family:monospace;">
+                                            <span title="SKU"><i class="bi bi-upc"></i> {{ $product->sku }}</span>
+                                            @if($product->barcode)
+                                                <span style="color:#cbd5e1;">|</span>
+                                                <span title="Barcode"><i class="bi bi-upc-scan"></i> {{ $product->barcode }}</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>
-                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
-                                <div style="font-family:monospace;color:#475569;font-weight:600;">{{ $product->sku }}
-                                </div>
-                            </td>
+
+                            <!-- QR Code -->
                             <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
                                 @if ($product->barcode)
-                                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data={{ urlencode($product->barcode) }}"
-                                            alt="QR Code"
-                                            style="width:40px;height:40px;border:1px solid #e2e8f0;padding:2px;border-radius:4px;background:#fff;"
-                                            title="Scan Barcode: {{ $product->barcode }}">
-                                        <span style="font-size:11px;color:#64748b;font-family:monospace;"><i
-                                                class="bi bi-upc-scan"></i> {{ $product->barcode }}</span>
-                                    </div>
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={{ urlencode($product->barcode) }}"
+                                        alt="QR Code"
+                                        style="width:36px;height:36px;border:1px solid #e2e8f0;padding:2px;border-radius:4px;background:#fff;"
+                                        title="Scan Barcode: {{ $product->barcode }}">
                                 @else
-                                    <span style="color:#94a3b8;font-size:12px;">N/A</span>
+                                    <span style="color:#94a3b8;font-size:12px;">-</span>
                                 @endif
                             </td>
-                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
-                                {{ $product->category?->name ?? 'N/A' }}</td>
+
+                            <!-- Category & Brand -->
+                            <td style="padding:14px 20px; vertical-align: middle;">
+                                <div style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-weight:600;color:#334155;font-size:13.5px;">{{ $product->category?->name ?? 'Uncategorized' }}</span>
+                                    <span style="font-size:12px;color:#64748b;">{{ $product->brand?->name ?? 'No Brand' }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Type -->
                             <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
                                 @if ($product->product_type === 'raw_material')
-                                    <span
-                                        style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">Raw
-                                        Material</span>
+                                    <span style="background:#fef3c7;color:#d97706;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;">Raw Material</span>
                                 @elseif($product->product_type === 'ready_made')
-                                    <span
-                                        style="background:#e0e7ff;color:#4f46e5;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">Ready
-                                        Made</span>
+                                    <span style="background:#e0e7ff;color:#4f46e5;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;">Ready Made</span>
                                 @elseif($product->product_type === 'finished_product')
-                                    <span
-                                        style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">Finished
-                                        Product</span>
+                                    <span style="background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px;">Finished Product</span>
                                 @else
-                                    <span style="color:#94a3b8;font-size:12px;">N/A</span>
+                                    <span style="color:#94a3b8;font-size:12px;">-</span>
                                 @endif
                             </td>
-                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
-                                {{ $product->brand?->name ?? 'N/A' }}</td>
-                            <td style="padding:14px 20px; text-align: right; vertical-align: middle;">৳
-                                {{ number_format($product->cost_price, 2) }}</td>
-                            <td
-                                style="padding:14px 20px; text-align: right; vertical-align: middle; font-weight: 700; color: #0f172a;">
-                                ৳ {{ number_format($product->sale_price, 2) }}</td>
-                            <td
-                                style="padding:14px 20px; text-align: center; vertical-align: middle; font-weight: 600;">
-                                {{ floatval($product->stock_qty) }} {{ $product->unit?->short_name ?? 'pcs' }}
+
+                            <!-- Pricing -->
+                            <td style="padding:14px 20px; text-align: right; vertical-align: middle;">
+                                <div style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-weight:700;color:#0f172a;font-size:14.5px;">৳ {{ number_format($product->sale_price, 2) }}</span>
+                                    <span style="font-size:12px;color:#64748b;" title="Cost Price">Cost: ৳ {{ number_format($product->cost_price, 2) }}</span>
+                                </div>
                             </td>
+
+                            <!-- Stock -->
                             <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
-                                <form action="{{ route('dashboard.products.toggle-stock', $product) }}"
-                                    method="POST" style="margin: 0; display: inline-block;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <label class="status-toggle-switch">
-                                        <input type="checkbox" onchange="this.form.submit()"
-                                            {{ $product->stock_qty > 0 ? 'checked' : '' }}>
-                                        <span class="status-toggle-slider"></span>
-                                    </label>
-                                </form>
-                                <div style="margin-top:4px;">
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                                    <span style="font-weight:700;color:#0f172a;font-size:14.5px;">{{ floatval($product->stock_qty) }}</span>
+                                    <span style="font-size:11px;color:#64748b;text-transform:uppercase;font-weight:600;">{{ $product->unit?->short_name ?? 'pcs' }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Status -->
+                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                                    <form action="{{ route('dashboard.products.toggle-stock', $product) }}"
+                                        method="POST" style="margin: 0;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <label class="status-toggle-switch">
+                                            <input type="checkbox" onchange="this.form.submit()"
+                                                {{ $product->stock_qty > 0 ? 'checked' : '' }}>
+                                            <span class="status-toggle-slider"></span>
+                                        </label>
+                                    </form>
                                     @if ($product->stock_qty <= 0)
-                                        <span style="color:#b91c1c;font-size:11px;font-weight:600;"><i
-                                                class="bi bi-x-circle-fill"></i> Out of Stock</span>
+                                        <span style="color:#ef4444;font-size:10px;font-weight:700;background:#fee2e2;padding:2px 6px;border-radius:10px;text-transform:uppercase;">Out of Stock</span>
                                     @elseif($product->stock_qty <= $product->alert_qty)
-                                        <span style="color:#d97706;font-size:11px;font-weight:600;"><i
-                                                class="bi bi-exclamation-triangle-fill"></i> Low Stock</span>
+                                        <span style="color:#d97706;font-size:10px;font-weight:700;background:#fef3c7;padding:2px 6px;border-radius:10px;text-transform:uppercase;">Low Stock</span>
                                     @else
-                                        <span style="color:#15803d;font-size:11px;font-weight:600;"><i
-                                                class="bi bi-check-circle-fill"></i> In Stock</span>
+                                        <span style="color:#10b981;font-size:10px;font-weight:700;background:#d1fae5;padding:2px 6px;border-radius:10px;text-transform:uppercase;">In Stock</span>
                                     @endif
                                 </div>
                             </td>
-                            <td
-                                style="padding:14px 20px; text-align: center; vertical-align: middle; font-size: 16px;">
-                                <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+
+                            <!-- Actions -->
+                            <td style="padding:14px 20px; text-align: center; vertical-align: middle;">
+                                <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:16px;">
                                     <!-- view btn  -->
-                                    <a href="{{ route('dashboard.products.show', $product) }}" style="color:#0ea5e9;"
-                                        title="View Product"><i class="bi bi-eye"></i></a>
+                                    <a href="{{ route('dashboard.products.show', $product) }}" style="color:#0ea5e9;transition:color 0.2s;"
+                                        onmouseover="this.style.color='#0284c7'" onmouseout="this.style.color='#0ea5e9'" title="View Product"><i class="bi bi-eye"></i></a>
                                     <!-- edit btn  -->
-                                    <a href="{{ route('dashboard.products.edit', $product) }}" style="color:#6366f1;"
-                                        title="Edit Product"><i class="bi bi-pencil-square"></i></a>
+                                    <a href="{{ route('dashboard.products.edit', $product) }}" style="color:#6366f1;transition:color 0.2s;"
+                                        onmouseover="this.style.color='#4f46e5'" onmouseout="this.style.color='#6366f1'" title="Edit Product"><i class="bi bi-pencil-square"></i></a>
                                     <!-- delete btn  -->
                                     <form id="delete-product-{{ $product->id }}" method="POST"
                                         action="{{ route('dashboard.products.destroy', $product) }}"
@@ -273,8 +256,8 @@
                                     </form>
                                     <button type="button"
                                         onclick="confirmDeleteProduct({{ $product->id }}, '{{ addslashes($product->name) }}')"
-                                        style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;padding:0;"
-                                        title="Delete Product">
+                                        style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;padding:0;transition:color 0.2s;"
+                                        onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#ef4444'" title="Delete Product">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -282,7 +265,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" style="padding:48px;text-align:center;color:#64748b;">
+                            <td colspan="8" style="padding:48px;text-align:center;color:#64748b;">
                                 <i class="bi bi-box-seam" style="font-size:36px;display:block;margin-bottom:8px;"></i>
                                 No products found in catalogue.
                             </td>

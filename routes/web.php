@@ -179,10 +179,11 @@ Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name
         'destroy' => 'recipes.destroy',
     ]);
     Route::get('/production', [ProductionController::class, 'production'])->name('production');
-    Route::get('/production/{batch}', [ProductionController::class, 'show'])->name('production.show');
+    Route::get('/production/{order}', [ProductionController::class, 'show'])->name('production.show');
     Route::post('/production', [ProductionController::class, 'store'])->name('production.store');
-    Route::patch('/production/{batch}/complete', [ProductionController::class, 'complete'])->name('production.complete');
-    Route::patch('/production/{batch}/cancel', [ProductionController::class, 'cancel'])->name('production.cancel');
+    Route::patch('/production/{order}/start', [ProductionController::class, 'start'])->name('production.start');
+    Route::patch('/production/{order}/complete', [ProductionController::class, 'complete'])->name('production.complete');
+    Route::patch('/production/{order}/cancel', [ProductionController::class, 'cancel'])->name('production.cancel');
     Route::get('/custom-orders', [CustomOrderController::class, 'customOrders'])->name('custom-orders');
     Route::post('/custom-orders', [CustomOrderController::class, 'store'])->name('custom-orders.store');
     Route::get('/custom-orders/{order}', [CustomOrderController::class, 'show'])->name('custom-orders.show');

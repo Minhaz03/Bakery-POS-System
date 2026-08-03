@@ -866,18 +866,22 @@
             </div>
 
             <div class="nav-section-label">Administration</div>
+            @can('users.view')
             <div class="nav-item">
                 <a href="{{ route('dashboard.users.index') }}"
                     class="nav-link {{ request()->routeIs('dashboard.users*') ? 'active' : '' }}">
                     <i class="bi bi-people-fill nav-icon"></i> Users
                 </a>
             </div>
+            @endcan
+            @can('roles.view')
             <div class="nav-item">
                 <a href="{{ route('dashboard.roles.index') }}"
                     class="nav-link {{ request()->routeIs('dashboard.roles*') ? 'active' : '' }}">
                     <i class="bi bi-shield-lock nav-icon"></i> Roles & Permissions
                 </a>
             </div>
+            @endcan
             <div class="nav-item">
                 <a href="{{ route('dashboard.settings.index') }}"
                     class="nav-link {{ request()->routeIs('dashboard.settings*') ? 'active' : '' }}">

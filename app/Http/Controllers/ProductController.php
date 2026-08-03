@@ -118,7 +118,7 @@ class ProductController extends Controller
             \App\Models\StockLedger::create([
                 'product_id' => $product->id,
                 'type'       => 'Initial Stock (+)',
-                'qty'        => $product->stock_qty,
+                'quantity'   => $product->stock_qty,
                 'user_id'    => auth()->id(),
                 'notes'      => 'Product created with initial stock',
             ]);
@@ -189,7 +189,7 @@ class ProductController extends Controller
             \App\Models\StockLedger::create([
                 'product_id' => $product->id,
                 'type'       => $type,
-                'qty'        => $diff,
+                'quantity'   => $diff,
                 'user_id'    => auth()->id(),
                 'notes'      => 'Product stock manually updated from ' . $oldStock . ' to ' . $newStock,
             ]);
@@ -208,7 +208,7 @@ class ProductController extends Controller
             \App\Models\StockLedger::create([
                 'product_id' => $product->id,
                 'type'       => 'Product Deleted (-)',
-                'qty'        => -$product->stock_qty,
+                'quantity'   => -$product->stock_qty,
                 'user_id'    => auth()->id(),
                 'notes'      => 'Product deleted, stock removed',
             ]);
@@ -330,7 +330,7 @@ class ProductController extends Controller
             \App\Models\StockLedger::create([
                 'product_id' => $product->id,
                 'type'       => 'Initial Stock (+)',
-                'qty'        => $product->stock_qty,
+                'quantity'   => $product->stock_qty,
                 'user_id'    => auth()->id(),
                 'notes'      => 'POS Item created with initial stock',
             ]);
@@ -397,7 +397,7 @@ class ProductController extends Controller
             \App\Models\StockLedger::create([
                 'product_id' => $product->id,
                 'type'       => $diff > 0 ? 'Manual Edit (+)' : 'Manual Edit (-)',
-                'qty'        => $diff,
+                'quantity'   => $diff,
                 'user_id'    => auth()->id(),
                 'notes'      => 'POS Item stock updated from ' . $oldStock . ' to ' . $newStock,
             ]);
@@ -415,7 +415,7 @@ class ProductController extends Controller
             \App\Models\StockLedger::create([
                 'product_id' => $product->id,
                 'type'       => 'Stock Toggled (-)',
-                'qty'        => -$oldStock,
+                'quantity'   => -$oldStock,
                 'user_id'    => auth()->id(),
                 'notes'      => 'Product marked as Out of Stock via toggle',
             ]);
@@ -426,7 +426,7 @@ class ProductController extends Controller
             \App\Models\StockLedger::create([
                 'product_id' => $product->id,
                 'type'       => 'Stock Toggled (+)',
-                'qty'        => $newQty,
+                'quantity'   => $newQty,
                 'user_id'    => auth()->id(),
                 'notes'      => 'Product marked as In Stock via toggle',
             ]);

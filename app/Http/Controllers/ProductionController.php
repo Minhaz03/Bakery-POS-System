@@ -4,153 +4,203 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use App\Models\ProductionOrder;
+use App\Models\ProductionOrderIngredient;
+use App\Models\ProductionBatch;
+use App\Models\Recipe;
+use App\Models\StockLedger;
 
 class ProductionController extends Controller
 {
     /**
-     * Display Production.
+     * Display Production Orders (mapped to legacy $batches array for view compatibility).
      */
     public function production(): View
     {
-        $dbBatches = \App\Models\ProductionBatch::with('recipe')->orderBy('scheduled_at', 'desc')->get();
-        
-        $batches = $dbBatches->map(function ($batch) {
+        $dbOrders = ProductionOrder::with('recipe')->orderBy('created_at', 'desc')->get();
+
+        $batches = $dbOrders->map(function ($order) {
             return [
-                'real_id' => $batch->id,
-                'id'      => $batch->batch_code,
-                'recipe'  => $batch->recipe ? $batch->recipe->name : 'Unknown Recipe',
-                'qty'     => (float) $batch->qty,
-                'status'  => $batch->status,
-                'date'    => $batch->scheduled_at ? $batch->scheduled_at->format('Y-m-d h:i A') : '—',
+                'real_id' => $order->id,
+                'id'      => $order->reference_no,
+                'recipe'  => $order->recipe ? $order->recipe->name : 'Unknown Recipe',
+                'qty'     => (float) $order->planned_quantity,
+                'status'  => ucwords(str_replace('-', ' ', $order->status)), // planned -> Planned, in-progress -> In Progress
+                'date'    => $order->planned_date ? $order->planned_date->format('Y-m-d') : '—',
             ];
         })->toArray();
 
-        $recipes = \App\Models\Recipe::where('is_active', true)->orderBy('name')->get();
-        return view('dashboard.production', compact('batches', 'recipes'));
+        $recipes = Recipe::where('is_active', true)->orderBy('name')->get();
+
+        return view('dashboard.production.index', compact('batches', 'recipes'));
     }
 
     /**
-     * Show Production Batch details.
+     * Show Production Order details.
      */
-    public function show(\App\Models\ProductionBatch $batch): View
+    public function show(ProductionOrder $order): View
     {
-        $batch->load(['recipe.product', 'consumptions.product']);
-        return view('dashboard.production-show', compact('batch'));
+        $order->load(['recipe.ingredients.product', 'ingredients.ingredient', 'batches', 'creator']);
+        return view('dashboard.production.show', compact('order'));
     }
 
     /**
-     * Store a new Production Batch.
+     * Store a new Production Order.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'recipe_id'   => 'required|exists:recipes,id',
-            'qty'         => 'required|numeric|min:0.01',
+            'recipe_id' => 'required|exists:recipes,id',
+            'qty'       => 'required|numeric|min:0.01',
             'scheduled_at' => 'required|date',
         ]);
 
-        \App\Models\ProductionBatch::create([
-            'batch_code'   => 'PB-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4)),
-            'recipe_id'    => $validated['recipe_id'],
-            'qty'          => $validated['qty'],
-            'status'       => 'Scheduled',
-            'scheduled_at' => $validated['scheduled_at'],
-            'created_by'   => auth()->id(),
-        ]);
+        $recipe = Recipe::with('ingredients.product')->findOrFail($validated['recipe_id']);
 
-        return redirect()->route('dashboard.production')->with('success', 'Production batch scheduled successfully.');
+        DB::transaction(function () use ($validated, $recipe) {
+            $order = ProductionOrder::create([
+                'reference_no'     => 'PO-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5)),
+                'recipe_id'        => $validated['recipe_id'],
+                'planned_quantity' => $validated['qty'],
+                'actual_quantity'  => 0,
+                'planned_date'     => date('Y-m-d', strtotime($validated['scheduled_at'])),
+                'status'           => 'planned',
+                'produced_by'      => auth()->id(),
+            ]);
+
+            // Auto-populate ingredients from recipe
+            $multiplier = $validated['qty'] / ($recipe->yield_qty ?: 1);
+            foreach ($recipe->ingredients as $ingredient) {
+                ProductionOrderIngredient::create([
+                    'production_order_id' => $order->id,
+                    'ingredient_id'       => $ingredient->product_id,
+                    'required_qty'        => $ingredient->net_quantity * $multiplier,
+                    'consumed_qty'        => 0,
+                    'waste_qty'           => 0,
+                ]);
+            }
+        });
+
+        return redirect()->route('dashboard.production')->with('success', 'Production order created successfully.');
     }
 
     /**
-     * Mark Production Batch as Completed.
+     * Start a production order (change to in-progress).
      */
-    public function complete(\App\Models\ProductionBatch $batch, Request $request)
+    public function start(ProductionOrder $order)
     {
-        if ($batch->status === 'Completed' || $batch->status === 'Cancelled') {
-            return redirect()->back()->with('error', 'Cannot complete this batch.');
+        if ($order->status !== 'planned') {
+            return redirect()->back()->with('error', 'Only planned orders can be started.');
+        }
+
+        $order->update(['status' => 'in-progress']);
+
+        return redirect()->route('dashboard.production')->with('success', 'Production order started.');
+    }
+
+    /**
+     * Complete a Production Order.
+     */
+    public function complete(ProductionOrder $order, Request $request)
+    {
+        if (in_array($order->status, ['completed', 'cancelled'])) {
+            return redirect()->back()->with('error', 'Cannot complete this order.');
         }
 
         $validated = $request->validate([
-            'wastage_qty' => 'nullable|numeric|min:0',
-            'wastage_notes' => 'nullable|string',
             'manufacturing_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date',
+            'expiry_date'        => 'nullable|date',
+            'wastage_qty'        => 'nullable|numeric|min:0',
+            'wastage_notes'      => 'nullable|string',
         ]);
 
-        $recipe = $batch->recipe()->with('ingredients.product', 'product')->first();
+        $recipe = $order->recipe()->with('ingredients.product', 'product')->first();
 
         if (!$recipe) {
             return redirect()->back()->with('error', 'Associated recipe not found.');
         }
 
-        $multiplier = $batch->qty / $recipe->yield_qty;
+        DB::transaction(function () use ($order, $recipe, $validated) {
+            $wasteQty   = $validated['wastage_qty'] ?? 0;
+            $actualQty  = $order->planned_quantity - $wasteQty;
+            $multiplier = $order->planned_quantity / ($recipe->yield_qty ?: 1);
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($batch, $recipe, $multiplier, $validated) {
-            // Deduct raw ingredients
-            foreach ($recipe->ingredients as $ingredient) {
-                if ($ingredient->product) {
-                    // deduct the base/net quantity from the stock
-                    $deductQty = $ingredient->net_quantity * $multiplier;
-                    $ingredient->product->decrement('stock_qty', $deductQty);
+            // Deduct raw ingredients from stock
+            foreach ($recipe->ingredients as $recipeIngredient) {
+                if ($recipeIngredient->product) {
+                    $deductQty = $recipeIngredient->net_quantity * $multiplier;
+                    $recipeIngredient->product->decrement('stock_qty', $deductQty);
 
-                    \App\Models\ProductionConsumption::create([
-                        'production_batch_id' => $batch->id,
-                        'product_id' => $ingredient->product_id,
-                        'qty' => $deductQty,
-                        'unit_cost' => $ingredient->product->cost_price,
-                        'total_cost' => $deductQty * $ingredient->product->cost_price,
-                    ]);
-
-                    \App\Models\StockLedger::create([
-                        'product_id' => $ingredient->product_id,
+                    StockLedger::create([
+                        'product_id' => $recipeIngredient->product_id,
                         'type'       => 'Production Usage (-)',
-                        'qty'        => -$deductQty,
+                        'quantity'   => -$deductQty,
                         'user_id'    => auth()->id(),
-                        'notes'      => "Used in batch: {$batch->batch_code}",
+                        'notes'      => "Used in order: {$order->reference_no}" . ($validated['wastage_notes'] ?? ''),
                     ]);
                 }
             }
 
-            // Add finished product (qty - wastage)
-            $wastageQty = $validated['wastage_qty'] ?? 0;
-            $netOutput = $batch->qty - $wastageQty;
-
-            if ($recipe->product && $netOutput > 0) {
-                $recipe->product->increment('stock_qty', $netOutput);
-
-                \App\Models\StockLedger::create([
-                    'product_id' => $recipe->product_id,
-                    'type'       => 'Production (+)',
-                    'qty'        => $netOutput,
-                    'user_id'    => auth()->id(),
-                    'notes'      => "Produced from batch: {$batch->batch_code}" . ($wastageQty > 0 ? " (Wastage: $wastageQty)" : ''),
+            // Update ingredient consumed quantities
+            foreach ($order->ingredients as $ingredient) {
+                $ingredient->update([
+                    'consumed_qty' => $ingredient->required_qty,
+                    'waste_qty'    => $wasteQty > 0
+                        ? round($ingredient->required_qty * ($wasteQty / $order->planned_quantity), 3)
+                        : 0,
                 ]);
             }
 
-            $batch->update([
-                'status'       => 'Completed',
-                'completed_at' => now(),
-                'manufacturing_date' => $validated['manufacturing_date'] ?? null,
-                'expiry_date' => $validated['expiry_date'] ?? null,
-                'wastage_qty' => $wastageQty,
-                'wastage_notes' => $validated['wastage_notes'] ?? null,
+            // Calculate cost
+            $totalCost   = $order->ingredients->sum(fn($i) => $i->consumed_qty * ($i->ingredient->cost_price ?? 0));
+            $costPerUnit = $actualQty > 0 ? round($totalCost / $actualQty, 4) : 0;
+
+            // Add finished product to stock
+            if ($recipe->product && $actualQty > 0) {
+                $recipe->product->increment('stock_qty', $actualQty);
+
+                StockLedger::create([
+                    'product_id' => $recipe->product_id,
+                    'type'       => 'Production (+)',
+                    'quantity'   => $actualQty,
+                    'user_id'    => auth()->id(),
+                    'notes'      => "Produced from order: {$order->reference_no}" . ($wasteQty > 0 ? " (Waste: $wasteQty)" : ''),
+                ]);
+            }
+
+            // Create a production batch record for this run
+            ProductionBatch::create([
+                'production_order_id' => $order->id,
+                'batch_number'        => 'BATCH-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4)),
+                'produced_qty'        => $actualQty,
+                'manufacturing_date'  => $validated['manufacturing_date'] ?? today(),
+                'expiry_date'         => $validated['expiry_date'] ?? null,
+            ]);
+
+            $order->update([
+                'status'          => 'completed',
+                'actual_quantity' => $actualQty,
+                'produced_at'     => now(),
+                'cost_per_unit'   => $costPerUnit,
+                'total_cost'      => $totalCost,
             ]);
         });
 
-        return redirect()->route('dashboard.production')->with('success', 'Batch completed and stock updated.');
+        return redirect()->route('dashboard.production')->with('success', 'Production order completed and stock updated.');
     }
 
     /**
-     * Cancel Production Batch.
+     * Cancel a Production Order.
      */
-    public function cancel(\App\Models\ProductionBatch $batch)
+    public function cancel(ProductionOrder $order)
     {
-        if ($batch->status === 'Completed') {
-            return redirect()->back()->with('error', 'Cannot cancel a completed batch.');
+        if ($order->status === 'completed') {
+            return redirect()->back()->with('error', 'Cannot cancel a completed order.');
         }
 
-        $batch->update(['status' => 'Cancelled']);
+        $order->update(['status' => 'cancelled']);
 
-        return redirect()->route('dashboard.production')->with('success', 'Production batch cancelled.');
+        return redirect()->route('dashboard.production')->with('success', 'Production order cancelled.');
     }
 }

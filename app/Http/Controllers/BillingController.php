@@ -27,7 +27,7 @@ class BillingController extends Controller
         // Fetch subscription history
         $history = Subscription::where('tenant_id', $tenant->id)->with('plan')->latest()->get();
 
-        return view('dashboard.billing', compact('tenant', 'activeSubscription', 'plans', 'productsCount', 'usersCount', 'history'));
+        return view('dashboard.billing.index', compact('tenant', 'activeSubscription', 'plans', 'productsCount', 'usersCount', 'history'));
     }
 
     public function subscribe(Request $request, SslCommerzService $sslCommerz): RedirectResponse
