@@ -1,24 +1,32 @@
 <x-layouts.saas title="Pricing Plans">
 
     <style>
-        .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 26px; }
-        .page-header-icon {
-            width: 48px; height: 48px; border-radius: 12px;
-            background: linear-gradient(135deg,#6366f1,#818cf8);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; color: #fff; flex-shrink: 0;
-        }
-        .page-header-info h1 { font-size:20px; font-weight:800; color:#0f172a; margin:0; }
-        .page-header-info p  { font-size:13px; color:#64748b; margin:3px 0 0; }
-        .table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-        .table th {
-            padding: 11px 16px; text-align: left; background: #f8fafc; color: #475569;
-            font-size: 11.5px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid #e2e8f0;
-        }
-        .table td { padding: 13px 16px; border-bottom: 1px solid #f1f5f9; color: #1e293b; vertical-align: middle; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+        .page-title-wrap { display: flex; align-items: center; gap: 16px; }
+        .page-header h1 { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0; }
+        .page-header p { font-size: 13.5px; color: #64748b; margin: 4px 0 0 0; }
+        
+        .header-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #fef08a, #fde047); color: #ca8a04; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.5); }
+        
+        .card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; overflow: hidden; margin-bottom: 24px; }
+        .card-header { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; background: #fff; display: flex; align-items: center; gap: 10px; }
+        .card-title { font-size: 15px; font-weight: 700; color: #0f172a; flex: 1; }
+        
+        .table-responsive { width: 100%; overflow-x: auto; }
+        .table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .table th { background: #f8fafc; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 14px 24px; text-align: left; letter-spacing: 0.5px; border-bottom: 1px solid #f1f5f9; }
+        .table td { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; vertical-align: middle; }
+        .table tr:last-child td { border-bottom: none; }
         
         /* ── Action Buttons ── */
-        .action-btns { display: flex; gap: 6px; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; text-decoration: none; }
+        .btn-outline { background: #fff; border: 1px solid #e2e8f0; color: #475569; }
+        .btn-outline:hover { background: #f8fafc; color: #0f172a; border-color: #cbd5e1; }
+        .btn-primary { background: #6366f1; color: white; }
+        .btn-primary:hover { background: #4f46e5; box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+        .action-btns { display: flex; gap: 6px; justify-content: flex-end; }
         .btn-icon {
             width: 32px; height: 32px; border-radius: 7px;
             display: inline-flex; align-items: center; justify-content: center;
@@ -60,31 +68,38 @@
         .modal-footer { padding: 16px 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 8px; }
         .modal-close { background: none; border: none; font-size: 18px; color: #94a3b8; cursor: pointer; margin-left: auto; }
         .modal-close:hover { color: #ef4444; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13.5px; outline: none; transition: border-color 0.2s; }
+        .form-control:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
     </style>
 
     <div class="page-header">
-        <div class="page-header-icon"><i class="bi bi-tags"></i></div>
-        <div class="page-header-info">
-            <h1>Pricing Plans</h1>
-            <p>Manage subscription plans and their limits</p>
+        <div class="page-title-wrap">
+            <div class="header-icon"><i class="bi bi-tags-fill"></i></div>
+            <div>
+                <h1>Pricing Plans</h1>
+                <p>Manage subscription plans and their tier limits.</p>
+            </div>
         </div>
-        <div style="margin-left:auto;display:flex;gap:8px;">
+        <div>
             <button class="btn btn-primary" onclick="openModal('createPlanModal')">
-                <i class="bi bi-plus-lg"></i> Add Plan
+                <i class="bi bi-plus-lg"></i> Create Plan
             </button>
         </div>
     </div>
 
     <div class="card">
-        <div class="card-header" style="display:flex; align-items:center;">
-            <i class="bi bi-table" style="color:#6366f1;font-size:18px;margin-right:8px;"></i>
-            <span class="card-title">All Plans</span>
+        <div class="card-header">
+            <i class="bi bi-list-ul" style="color:#6366f1;font-size:18px;"></i>
+            <span class="card-title">Available Plans</span>
         </div>
-        <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th>Plan Name</th>
                         <th>Price</th>
                         <th>Billing Cycle</th>
                         <th>Product Limit</th>
@@ -95,13 +110,13 @@
                 <tbody>
                     @forelse($plans as $plan)
                     <tr>
-                        <td style="font-weight:600;">{{ $plan->name }}</td>
-                        <td>${{ number_format($plan->price, 2) }}</td>
+                        <td style="font-weight:700; color:#0f172a;">{{ $plan->name }}</td>
+                        <td style="font-weight:600;">${{ number_format($plan->price, 2) }}</td>
                         <td style="text-transform:capitalize;">{{ $plan->billing_cycle }}</td>
                         <td>{{ $plan->limit_products }}</td>
                         <td>{{ $plan->limit_users }}</td>
                         <td>
-                            <div class="action-btns" style="justify-content:flex-end;">
+                            <div class="action-btns">
                                 <button class="btn-icon" title="Edit Plan"
                                     onclick="openEditModal({{ $plan->id }}, '{{ addslashes($plan->name) }}', '{{ $plan->price }}', '{{ $plan->billing_cycle }}', {{ $plan->limit_products }}, {{ $plan->limit_users }})">
                                     <i class="bi bi-pencil"></i>
@@ -117,7 +132,7 @@
                     <tr>
                         <td colspan="6" style="text-align:center;padding:48px;color:#94a3b8;">
                             <i class="bi bi-tags" style="font-size:36px;display:block;margin-bottom:10px;"></i>
-                            <div>No plans found.</div>
+                            <div>No plans found. Create one to get started.</div>
                         </td>
                     </tr>
                     @endforelse
@@ -125,7 +140,7 @@
             </table>
         </div>
         @if($plans->hasPages())
-        <div style="padding:14px 22px;border-top:1px solid #f1f5f9;">
+        <div style="padding:16px 24px;border-top:1px solid #f1f5f9;">
             {{ $plans->links() }}
         </div>
         @endif
@@ -142,21 +157,21 @@
                     <div class="modal-title">Add New Plan</div>
                     <div class="modal-sub">Create a new pricing tier</div>
                 </div>
-                <button class="modal-close" onclick="closeModal('createPlanModal')"><i class="bi bi-x-lg"></i></button>
+                <button class="modal-close" type="button" onclick="closeModal('createPlanModal')"><i class="bi bi-x-lg"></i></button>
             </div>
             <form method="POST" action="{{ route('saas.plans.store') }}">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label">Plan Name *</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input type="text" name="name" class="form-control" required placeholder="e.g. Pro Plan">
                     </div>
-                    <div class="form-group" style="display:flex;gap:15px;">
-                        <div style="flex:1;">
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Price *</label>
-                            <input type="number" step="0.01" name="price" class="form-control" required>
+                            <input type="number" step="0.01" name="price" class="form-control" required placeholder="0.00">
                         </div>
-                        <div style="flex:1;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Billing Cycle *</label>
                             <select name="billing_cycle" class="form-control" required>
                                 <option value="monthly">Monthly</option>
@@ -164,14 +179,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group" style="display:flex;gap:15px;">
-                        <div style="flex:1;">
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Max Products *</label>
-                            <input type="number" name="limit_products" class="form-control" required>
+                            <input type="number" name="limit_products" class="form-control" required placeholder="100">
                         </div>
-                        <div style="flex:1;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Max Users *</label>
-                            <input type="number" name="limit_users" class="form-control" required>
+                            <input type="number" name="limit_users" class="form-control" required placeholder="5">
                         </div>
                     </div>
                 </div>
@@ -194,7 +209,7 @@
                     <div class="modal-title">Edit Plan</div>
                     <div class="modal-sub" id="editPlanSubtitle">Update plan details</div>
                 </div>
-                <button class="modal-close" onclick="closeModal('editPlanModal')"><i class="bi bi-x-lg"></i></button>
+                <button class="modal-close" type="button" onclick="closeModal('editPlanModal')"><i class="bi bi-x-lg"></i></button>
             </div>
             <form method="POST" id="editPlanForm">
                 @csrf @method('PUT')
@@ -203,12 +218,12 @@
                         <label class="form-label">Plan Name *</label>
                         <input type="text" name="name" id="editName" class="form-control" required>
                     </div>
-                    <div class="form-group" style="display:flex;gap:15px;">
-                        <div style="flex:1;">
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Price *</label>
                             <input type="number" step="0.01" name="price" id="editPrice" class="form-control" required>
                         </div>
-                        <div style="flex:1;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Billing Cycle *</label>
                             <select name="billing_cycle" id="editCycle" class="form-control" required>
                                 <option value="monthly">Monthly</option>
@@ -216,12 +231,12 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group" style="display:flex;gap:15px;">
-                        <div style="flex:1;">
+                    <div style="display:flex; gap:16px;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Max Products *</label>
                             <input type="number" name="limit_products" id="editLimitProducts" class="form-control" required>
                         </div>
-                        <div style="flex:1;">
+                        <div class="form-group" style="flex:1;">
                             <label class="form-label">Max Users *</label>
                             <input type="number" name="limit_users" id="editLimitUsers" class="form-control" required>
                         </div>

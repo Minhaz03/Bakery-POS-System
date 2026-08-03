@@ -30,7 +30,7 @@
                     </div>
                     <div style="font-size:13.5px;color:#64748b;">
                         <span>Renews/Expires on: </span>
-                        <strong style="color:#1e293b;">{{ $activeSubscription->ends_at->format('d M, Y') }}</strong>
+                        <strong style="color:#1e293b;">{{ $activeSubscription->ends_at ? $activeSubscription->ends_at->format('d M, Y') : 'N/A' }}</strong>
                     </div>
                 @else
                     <h3 style="font-size:24px;font-weight:800;color:#dc2626;margin:0 0 4px 0;">No Active Subscription</h3>
@@ -192,10 +192,10 @@
                                 @endif
                             </td>
                             <td style="padding: 16px 24px; font-size: 14px; color: #475569;">
-                                {{ $sub->starts_at->format('M d, Y') }}
+                                {{ $sub->starts_at ? $sub->starts_at->format('M d, Y') : 'N/A' }}
                             </td>
                             <td style="padding: 16px 24px; font-size: 14px; color: #475569;">
-                                {{ $sub->ends_at->format('M d, Y') }}
+                                {{ $sub->ends_at ? $sub->ends_at->format('M d, Y') : 'N/A' }}
                             </td>
                         </tr>
                     @empty

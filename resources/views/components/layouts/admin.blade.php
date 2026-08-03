@@ -908,9 +908,7 @@
                 </div>
             </div>
             <div class="sidebar-footer-actions">
-                <a href="{{ route('dashboard.settings.index') }}" class="sidebar-action-btn settings" title="Settings">
-                    <i class="bi bi-gear-fill"></i> Settings
-                </a>
+               
                 <form method="POST" action="{{ route('logout') }}" style="margin:0;flex:1;display:flex;">
                     @csrf
                     <button type="submit" class="sidebar-action-btn logout" title="Log Out" style="width:100%;">

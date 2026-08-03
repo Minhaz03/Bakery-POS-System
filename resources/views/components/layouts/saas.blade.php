@@ -737,6 +737,16 @@
         <nav class="sidebar-nav">
             <div class="nav-section-label">SaaS Admin</div>
             <div class="nav-item">
+                <a href="{{ route('saas.dashboard') }}" class="nav-link {{ request()->routeIs('saas.dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2 nav-icon"></i> Dashboard
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('saas.tenants.index') }}" class="nav-link {{ request()->routeIs('saas.tenants.*') ? 'active' : '' }}">
+                    <i class="bi bi-buildings nav-icon"></i> Tenants
+                </a>
+            </div>
+            <div class="nav-item">
                 <a href="{{ route('saas.subscriptions.index') }}" class="nav-link {{ request()->routeIs('saas.subscriptions.*') ? 'active' : '' }}">
                     <i class="bi bi-card-list nav-icon"></i> Subscriptions
                 </a>
@@ -744,6 +754,14 @@
             <div class="nav-item">
                 <a href="{{ route('saas.users.index') }}" class="nav-link {{ request()->routeIs('saas.users.*') ? 'active' : '' }}">
                     <i class="bi bi-people nav-icon"></i> Users
+                </a>
+            </div>
+            <div class="nav-item" style="margin-top:20px;">
+                <div style="padding: 0 16px 8px 16px; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Platform</div>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('saas.settings.index') }}" class="nav-link {{ request()->routeIs('saas.settings.*') ? 'active' : '' }}">
+                    <i class="bi bi-gear nav-icon"></i> Settings
                 </a>
             </div>
             <div class="nav-item">
@@ -761,9 +779,7 @@
                 </div>
             </div>
             <div class="sidebar-footer-actions">
-                <a href="#" class="sidebar-action-btn settings" title="Settings">
-                    <i class="bi bi-gear-fill"></i> Settings
-                </a>
+                
                 <form method="POST" action="{{ route('saas.logout') }}" style="margin:0;flex:1;display:flex;">
                     @csrf
                     <button type="submit" class="sidebar-action-btn logout" title="Log Out" style="width:100%;">
