@@ -74,6 +74,11 @@ class ProductController extends Controller
                 ->with('error', "Your plan limit has been reached! You can only have up to {$limit} products. Please upgrade your plan.");
         }
 
+        $deletedErrors = $this->checkDeletedUnique($request);
+        if (!empty($deletedErrors)) {
+            return redirect()->back()->withInput()->withErrors($deletedErrors);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|max:100|unique:products,sku',
@@ -99,7 +104,7 @@ class ProductController extends Controller
         $validated['is_pos_enabled'] = $request->has('is_pos_enabled');
 
         if (empty($validated['sku'])) {
-            $nextId = (Product::max('id') ?? 0) + 1;
+            $nextId = (Product::withTrashed()->max('id') ?? 0) + 1;
             $validated['sku'] = 'SKU-' . str_pad($nextId, 6, '0', STR_PAD_LEFT);
         }
 
@@ -139,6 +144,11 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product): RedirectResponse
     {
+        $deletedErrors = $this->checkDeletedUnique($request, $product->id);
+        if (!empty($deletedErrors)) {
+            return redirect()->back()->withInput()->withErrors($deletedErrors);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|max:100|unique:products,sku,' . $product->id,
@@ -289,6 +299,11 @@ class ProductController extends Controller
                 ->with('error', "Your plan limit has been reached! You can only have up to {$limit} products. Please upgrade your plan.");
         }
 
+        $deletedErrors = $this->checkDeletedUnique($request);
+        if (!empty($deletedErrors)) {
+            return redirect()->back()->withInput()->withErrors($deletedErrors);
+        }
+
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
             'sku'          => 'nullable|string|max:100|unique:products,sku',
@@ -314,7 +329,7 @@ class ProductController extends Controller
         $validated['is_active']      = $request->has('is_active');
 
         if (empty($validated['sku'])) {
-            $nextId = (Product::max('id') ?? 0) + 1;
+            $nextId = (Product::withTrashed()->max('id') ?? 0) + 1;
             $validated['sku'] = 'SKU-' . str_pad($nextId, 6, '0', STR_PAD_LEFT);
         }
         if (empty($validated['barcode'])) {
@@ -351,6 +366,11 @@ class ProductController extends Controller
 
     public function posItemUpdate(Request $request, Product $product): RedirectResponse
     {
+        $deletedErrors = $this->checkDeletedUnique($request, $product->id);
+        if (!empty($deletedErrors)) {
+            return redirect()->back()->withInput()->withErrors($deletedErrors);
+        }
+
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
             'sku'          => 'nullable|string|max:100|unique:products,sku,' . $product->id,
@@ -433,5 +453,28 @@ class ProductController extends Controller
         }
 
         return redirect()->back()->with('success', $message);
+    }
+    private function checkDeletedUnique(Request $request, $ignoreId = null): array
+    {
+        $errors = [];
+        if ($request->filled('sku')) {
+            $query = Product::onlyTrashed()->where('sku', $request->sku);
+            if ($ignoreId) {
+                $query->where('id', '!=', $ignoreId);
+            }
+            if ($query->exists()) {
+                $errors['sku'] = 'This SKU is already taken by a deleted product. Please restore it or use another SKU.';
+            }
+        }
+        if ($request->filled('barcode')) {
+            $query = Product::onlyTrashed()->where('barcode', $request->barcode);
+            if ($ignoreId) {
+                $query->where('id', '!=', $ignoreId);
+            }
+            if ($query->exists()) {
+                $errors['barcode'] = 'This Barcode is already taken by a deleted product. Please restore it or use another Barcode.';
+            }
+        }
+        return $errors;
     }
 }

@@ -722,8 +722,9 @@
 </head>
 
 <body>
-    @if(session()->has('impersonated_by'))
-        <div style="background: #1e293b; color: #f8fafc; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 9999; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    @if (session()->has('impersonated_by'))
+        <div
+            style="background: #1e293b; color: #f8fafc; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 9999; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <i class="bi bi-incognito" style="font-size: 20px; color: #818cf8;"></i>
                 <span style="font-size: 14px; font-weight: 600;">
@@ -732,7 +733,9 @@
             </div>
             <form method="POST" action="{{ route('impersonation.leave') }}" style="margin: 0;">
                 @csrf
-                <button type="submit" class="btn" style="background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;" onmouseover="this.style.background='#475569'" onmouseout="this.style.background='#334155'">
+                <button type="submit" class="btn"
+                    style="background: #334155; color: #f8fafc; border: 1px solid #475569; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;"
+                    onmouseover="this.style.background='#475569'" onmouseout="this.style.background='#334155'">
                     <i class="bi bi-box-arrow-left"></i> Return to Super Admin
                 </button>
             </form>
@@ -761,9 +764,9 @@
 
             <div class="nav-section-label">Inventory</div>
             <div class="nav-item">
-                <a href="{{ route('dashboard.products') }}"
+                {{-- <a href="{{ route('dashboard.products') }}"
                     class="nav-link {{ request()->routeIs('dashboard.products') ? 'active' : '' }}"><i
-                        class="bi bi-box-seam nav-icon"></i> Products</a>
+                        class="bi bi-box-seam nav-icon"></i> Products</a> --}}
             </div>
             <div class="nav-item">
                 <a href="{{ route('dashboard.pos-items') }}"
@@ -827,34 +830,44 @@
 
             <div class="nav-section-label">Reports</div>
             <div class="nav-item" x-data="{ open: {{ request()->routeIs('dashboard.reports.*') ? 'true' : 'false' }} }">
-                <button type="button" @click="open = !open" class="nav-link {{ request()->routeIs('dashboard.reports.*') ? 'active' : '' }}" style="width: 100%; border: none; background: none; text-align: left; display: flex; align-items: center; cursor: pointer; padding: 9px 12px; transition: all 0.15s;">
+                <button type="button" @click="open = !open"
+                    class="nav-link {{ request()->routeIs('dashboard.reports.*') ? 'active' : '' }}"
+                    style="width: 100%; border: none; background: none; text-align: left; display: flex; align-items: center; cursor: pointer; padding: 9px 12px; transition: all 0.15s;">
                     <i class="bi bi-file-earmark-text nav-icon"></i>
                     <span>Reports</span>
-                    <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'" style="font-size: 10px; margin-left: auto;"></i>
+                    <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"
+                        style="font-size: 10px; margin-left: auto;"></i>
                 </button>
-                <div x-show="open" style="padding-left: 12px; display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
+                <div x-show="open"
+                    style="padding-left: 12px; display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
                     <a href="{{ route('dashboard.reports.index') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.index') ? 'active' : '' }}" style="font-size: 13px; padding: 7px 12px;">
+                        class="nav-link {{ request()->routeIs('dashboard.reports.index') ? 'active' : '' }}"
+                        style="font-size: 13px; padding: 7px 12px;">
                         <i class="bi bi-grid nav-icon" style="font-size:12px;"></i> All Reports
                     </a>
                     <a href="{{ route('dashboard.reports.sales') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.sales') ? 'active' : '' }}" style="font-size: 13px; padding: 7px 12px;">
+                        class="nav-link {{ request()->routeIs('dashboard.reports.sales') ? 'active' : '' }}"
+                        style="font-size: 13px; padding: 7px 12px;">
                         <i class="bi bi-graph-up nav-icon" style="font-size:12px;"></i> Sales Report
                     </a>
                     <a href="{{ route('dashboard.reports.purchases') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.purchases') ? 'active' : '' }}" style="font-size: 13px; padding: 7px 12px;">
+                        class="nav-link {{ request()->routeIs('dashboard.reports.purchases') ? 'active' : '' }}"
+                        style="font-size: 13px; padding: 7px 12px;">
                         <i class="bi bi-cart nav-icon" style="font-size:12px;"></i> Purchases
                     </a>
                     <a href="{{ route('dashboard.reports.stock') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.stock') ? 'active' : '' }}" style="font-size: 13px; padding: 7px 12px;">
+                        class="nav-link {{ request()->routeIs('dashboard.reports.stock') ? 'active' : '' }}"
+                        style="font-size: 13px; padding: 7px 12px;">
                         <i class="bi bi-box nav-icon" style="font-size:12px;"></i> Stock Report
                     </a>
                     <a href="{{ route('dashboard.reports.production') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.production') ? 'active' : '' }}" style="font-size: 13px; padding: 7px 12px;">
+                        class="nav-link {{ request()->routeIs('dashboard.reports.production') ? 'active' : '' }}"
+                        style="font-size: 13px; padding: 7px 12px;">
                         <i class="bi bi-clipboard-check nav-icon" style="font-size:12px;"></i> Production
                     </a>
                     <a href="{{ route('dashboard.reports.profit-loss') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.profit-loss') ? 'active' : '' }}" style="font-size: 13px; padding: 7px 12px;">
+                        class="nav-link {{ request()->routeIs('dashboard.reports.profit-loss') ? 'active' : '' }}"
+                        style="font-size: 13px; padding: 7px 12px;">
                         <i class="bi bi-cash-coin nav-icon" style="font-size:12px;"></i> Profit & Loss
                     </a>
                 </div>
@@ -867,20 +880,20 @@
 
             <div class="nav-section-label">Administration</div>
             @can('users.view')
-            <div class="nav-item">
-                <a href="{{ route('dashboard.users.index') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.users*') ? 'active' : '' }}">
-                    <i class="bi bi-people-fill nav-icon"></i> Users
-                </a>
-            </div>
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.users.index') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.users*') ? 'active' : '' }}">
+                        <i class="bi bi-people-fill nav-icon"></i> Users
+                    </a>
+                </div>
             @endcan
             @can('roles.view')
-            <div class="nav-item">
-                <a href="{{ route('dashboard.roles.index') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.roles*') ? 'active' : '' }}">
-                    <i class="bi bi-shield-lock nav-icon"></i> Roles & Permissions
-                </a>
-            </div>
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.roles.index') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.roles*') ? 'active' : '' }}">
+                        <i class="bi bi-shield-lock nav-icon"></i> Roles & Permissions
+                    </a>
+                </div>
             @endcan
             <div class="nav-item">
                 <a href="{{ route('dashboard.settings.index') }}"
@@ -912,7 +925,7 @@
                 </div>
             </div>
             <div class="sidebar-footer-actions">
-               
+
                 <form method="POST" action="{{ route('logout') }}" style="margin:0;flex:1;display:flex;">
                     @csrf
                     <button type="submit" class="sidebar-action-btn logout" title="Log Out" style="width:100%;">
