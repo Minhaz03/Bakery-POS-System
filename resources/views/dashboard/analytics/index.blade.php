@@ -238,10 +238,10 @@
             new Chart(categoryCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Bread', 'Pastry', 'Cake', 'Beverage'],
+                    labels: @json(collect($analytics['top_selling'])->pluck('name')),
                     datasets: [{
-                        data: [40, 30, 20, 10],
-                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899'],
+                        data: @json(collect($analytics['top_selling'])->pluck('revenue')),
+                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#14b8a6', '#f97316', '#06b6d4', '#84cc16'],
                         borderWidth: 2,
                         hoverOffset: 4
                     }]
