@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(fn (Request $request) =>
-            $request->is('saas*') ? route('saas.login') : route('login')
+            $request->is('superadmin*') ? route('saas.login') : route('login')
         );
         
         $middleware->alias([

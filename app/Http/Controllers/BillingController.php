@@ -68,6 +68,10 @@ class BillingController extends Controller
 
         $subscription = Subscription::where('transaction_id', $tranId)->with('plan')->first();
 
+        if ($subscription && $subscription->tenant && $subscription->tenant->users->count() > 0) {
+            \Illuminate\Support\Facades\Auth::login($subscription->tenant->users->first());
+        }
+
         if (!$subscription || $subscription->status !== 'pending') {
             return redirect()->route('dashboard.billing')->with('error', 'Invalid transaction.');
         }
@@ -100,6 +104,10 @@ class BillingController extends Controller
         $tranId = $request->input('tran_id');
         $subscription = Subscription::where('transaction_id', $tranId)->first();
 
+        if ($subscription && $subscription->tenant && $subscription->tenant->users->count() > 0) {
+            \Illuminate\Support\Facades\Auth::login($subscription->tenant->users->first());
+        }
+
         if ($subscription && $subscription->status === 'pending') {
             $subscription->update(['status' => 'cancelled']);
         }
@@ -111,6 +119,10 @@ class BillingController extends Controller
     {
         $tranId = $request->input('tran_id');
         $subscription = Subscription::where('transaction_id', $tranId)->first();
+
+        if ($subscription && $subscription->tenant && $subscription->tenant->users->count() > 0) {
+            \Illuminate\Support\Facades\Auth::login($subscription->tenant->users->first());
+        }
 
         if ($subscription && $subscription->status === 'pending') {
             $subscription->update(['status' => 'cancelled']);

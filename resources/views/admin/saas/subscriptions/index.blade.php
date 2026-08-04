@@ -245,7 +245,7 @@
         });
 
         function openEditModal(id, tenantName, planId, status, startsAt, endsAt) {
-            document.getElementById('editSubForm').action = '/saas/subscriptions/' + id;
+            document.getElementById('editSubForm').action = '/superadmin/subscriptions/' + id;
             document.getElementById('editSubTitle').textContent = 'Editing subscription for ' + tenantName;
             
             document.getElementById('editPlan').value = planId;

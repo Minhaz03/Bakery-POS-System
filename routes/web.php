@@ -51,8 +51,10 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
     Route::post('/billing/subscribe', [BillingController::class, 'subscribe'])->name('billing.subscribe');
-    
-    // SSLCommerz Callbacks
+});
+
+// SSLCommerz Callbacks (Exempt from auth middleware due to cross-site POST)
+Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::post('/billing/payment/success', [BillingController::class, 'paymentSuccess'])->name('billing.payment.success');
     Route::post('/billing/payment/fail', [BillingController::class, 'paymentFail'])->name('billing.payment.fail');
     Route::post('/billing/payment/cancel', [BillingController::class, 'paymentCancel'])->name('billing.payment.cancel');
@@ -240,7 +242,7 @@ Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'verified'])
 });
 
 // ── SaaS Super Admin Routes ──
-Route::prefix('saas')->name('saas.')->group(function () {
+Route::prefix('superadmin')->name('saas.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

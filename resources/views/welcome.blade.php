@@ -1183,8 +1183,8 @@
             <nav class="nav-links">
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#pricing" class="nav-link">Pricing</a>
-                <a @click="$dispatch('set-tab', 'login')" class="nav-link">Sign In</a>
-                <a @click="$dispatch('set-tab', 'register')" class="cta-primary"
+                <a href="{{ route('login') }}" @click.prevent="$dispatch('set-tab', 'login')" class="nav-link">Sign In</a>
+                <a href="{{ route('register') }}" @click.prevent="$dispatch('set-tab', 'register')" class="cta-primary"
                     style="padding: .5rem 1rem; font-size: .78rem; box-shadow: none;">Get Started</a>
             </nav>
 

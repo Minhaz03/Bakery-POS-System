@@ -246,7 +246,7 @@
         });
 
         function openEditModal(id, name, domain) {
-            document.getElementById('editTenantForm').action = '/saas/tenants/' + id;
+            document.getElementById('editTenantForm').action = '/superadmin/tenants/' + id;
             document.getElementById('editTenantTitle').textContent = 'Editing: ' + name;
             
             document.getElementById('editName').value = name;
@@ -267,7 +267,7 @@
             }).then(result => {
                 if (result.isConfirmed) {
                     const form = document.getElementById('deleteTenantForm');
-                    form.action = '/saas/tenants/' + id;
+                    form.action = '/superadmin/tenants/' + id;
                     form.submit();
                 }
             });

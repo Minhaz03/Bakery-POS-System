@@ -266,7 +266,7 @@
         });
 
         function openEditModal(id, name, price, cycle, limitProd, limitUser) {
-            document.getElementById('editPlanForm').action = '/saas/plans/' + id;
+            document.getElementById('editPlanForm').action = '/superadmin/plans/' + id;
             document.getElementById('editName').value = name;
             document.getElementById('editPrice').value = price;
             document.getElementById('editCycle').value = cycle;
@@ -288,7 +288,7 @@
             }).then(result => {
                 if (result.isConfirmed) {
                     const form = document.getElementById('deletePlanForm');
-                    form.action = '/saas/plans/' + id;
+                    form.action = '/superadmin/plans/' + id;
                     form.submit();
                 }
             });

@@ -13,9 +13,17 @@ class SslCommerzService
 
     public function __construct()
     {
-        $this->storeId = config('sslcommerz.store_id');
-        $this->storePassword = config('sslcommerz.store_password');
-        $this->apiDomain = config('sslcommerz.api_domain');
+        $this->storeId = \App\Models\Setting::get('sslcommerz_store_id') ?: config('sslcommerz.store_id');
+        $this->storePassword = \App\Models\Setting::get('sslcommerz_store_password') ?: config('sslcommerz.store_password');
+        
+        $isSandbox = \App\Models\Setting::get('sslcommerz_is_sandbox');
+        if ($isSandbox !== null) {
+            $this->apiDomain = $isSandbox 
+                ? 'https://sandbox.sslcommerz.com' 
+                : 'https://securepay.sslcommerz.com';
+        } else {
+            $this->apiDomain = config('sslcommerz.api_domain');
+        }
     }
 
     /**
