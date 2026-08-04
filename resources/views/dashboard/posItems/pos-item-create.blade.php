@@ -313,8 +313,8 @@
                             <div class="form-group" style="margin-bottom:0;">
                                 <label class="form-label" for="stock_qty">Initial Stock <span
                                         style="color:#ef4444;">*</span></label>
-                                <input type="number" step="0.001" name="stock_qty" id="stock_qty"
-                                    class="form-control" value="{{ old('stock_qty', '0.000') }}" required
+                                <input type="number" step="0" name="stock_qty" id="stock_qty"
+                                    class="form-control" value="{{ old('stock_qty', '0') }}" required
                                     min="0">
                                 @error('stock_qty')
                                     <span
@@ -324,8 +324,8 @@
                             <div class="form-group" style="margin-bottom:0;">
                                 <label class="form-label" for="alert_qty">Low Stock Alert <span
                                         style="color:#ef4444;">*</span></label>
-                                <input type="number" step="0.001" name="alert_qty" id="alert_qty"
-                                    class="form-control" value="{{ old('alert_qty', '5.000') }}" required
+                                <input type="number" step="0" name="alert_qty" id="alert_qty"
+                                    class="form-control" value="{{ old('alert_qty', '5') }}" required
                                     min="0">
                                 @error('alert_qty')
                                     <span
@@ -335,8 +335,8 @@
                             <div class="form-group" style="margin-bottom:0;">
                                 <label class="form-label" for="reorder_qty">Reorder Level <span
                                         style="color:#ef4444;">*</span></label>
-                                <input type="number" step="0.001" name="reorder_qty" id="reorder_qty"
-                                    class="form-control" value="{{ old('reorder_qty', '0.000') }}" required
+                                <input type="number" step="0" name="reorder_qty" id="reorder_qty"
+                                    class="form-control" value="{{ old('reorder_qty', '0') }}" required
                                     min="0">
                                 @error('reorder_qty')
                                     <span
