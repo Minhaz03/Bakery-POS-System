@@ -131,37 +131,39 @@
 
         <!-- Edit Category Modal -->
         <div x-show="showEditModal" style="display:none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div style="display:flex; align-items:center; justify-content:center; min-height:100vh; padding:16px;">
+                <!-- Backdrop -->
                 <div x-show="showEditModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showEditModal = false" aria-hidden="true"></div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div x-show="showEditModal" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                
+                <!-- Modal Panel -->
+                <div x-show="showEditModal" style="background:#fff; border-radius:8px; width:100%; max-width:500px; position:relative; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); overflow:hidden;">
                     <form :action="`/dashboard/expense-categories/${editCategory.id}`" method="POST">
                         @csrf
                         @method('PUT')
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title" style="margin-bottom: 1rem; font-weight: 700;">Edit Expense Category</h3>
+                        <div style="padding:24px;">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title" style="margin-bottom: 24px; font-weight: 700;">Edit Expense Category</h3>
                             
-                            <div style="margin-bottom: 1rem;">
+                            <div style="margin-bottom: 16px;">
                                 <label style="display:block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 4px;">Category Name</label>
                                 <input type="text" name="name" x-model="editCategory.name" class="form-control" style="width: 100%;" required>
                             </div>
 
-                            <div style="margin-bottom: 1rem;">
+                            <div style="margin-bottom: 16px;">
                                 <label style="display:block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 4px;">Description (Optional)</label>
                                 <textarea name="description" x-model="editCategory.description" class="form-control" style="width: 100%;" rows="3"></textarea>
                             </div>
 
-                            <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <div style="margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
                                 <input type="checkbox" name="is_active" value="1" x-model="editCategory.is_active" id="edit_is_active">
                                 <label for="edit_is_active" style="font-size: 13px; font-weight: 600; color: #475569;">Active</label>
                             </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 8px;">
-                            <button type="submit" class="btn btn-primary" style="padding: 8px 16px;">
-                                Save Changes
-                            </button>
+                        <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px 24px; display: flex; justify-content: flex-end; gap: 8px;">
                             <button type="button" @click="showEditModal = false" class="btn btn-outline" style="padding: 8px 16px;">
                                 Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary" style="padding: 8px 16px;">
+                                Save Changes
                             </button>
                         </div>
                     </form>
