@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:24px;">
         <!-- P&L Statement -->
         <div class="card">
             <div class="card-header">
@@ -45,10 +45,20 @@
                             <td style="padding:16px 20px;color:#64748b;">Less: Cost of Goods Sold (COGS)</td>
                             <td style="padding:16px 20px;text-align:right;font-weight:600;color:#ef4444;">- ৳ {{ number_format($summary['cogs'], 2) }}</td>
                         </tr>
-                        <tr>
-                            <td style="padding:20px;font-weight:800;font-size:16px;color:#0f172a;">Gross Profit</td>
-                            <td style="padding:20px;text-align:right;font-weight:800;font-size:18px; {{ $summary['gross_profit'] >= 0 ? 'color:#10b981;' : 'color:#ef4444;' }}">
+                        <tr style="border-bottom:1px solid #f1f5f9;">
+                            <td style="padding:20px;font-weight:700;font-size:15px;color:#0f172a;">Gross Profit</td>
+                            <td style="padding:20px;text-align:right;font-weight:700;font-size:16px; {{ $summary['gross_profit'] >= 0 ? 'color:#10b981;' : 'color:#ef4444;' }}">
                                 ৳ {{ number_format($summary['gross_profit'], 2) }}
+                            </td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #e2e8f0;background:#f8fafc;">
+                            <td style="padding:16px 20px;color:#64748b;">Less: Operating Expenses</td>
+                            <td style="padding:16px 20px;text-align:right;font-weight:600;color:#ef4444;">- ৳ {{ number_format($summary['total_expenses'], 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:20px;font-weight:800;font-size:16px;color:#0f172a;">Net Profit</td>
+                            <td style="padding:20px;text-align:right;font-weight:800;font-size:20px; {{ $summary['net_profit'] >= 0 ? 'color:#10b981;' : 'color:#ef4444;' }}">
+                                ৳ {{ number_format($summary['net_profit'], 2) }}
                             </td>
                         </tr>
                     </tbody>
@@ -56,15 +66,23 @@
             </div>
         </div>
 
-        <!-- Margin Card -->
-        <div class="card" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);color:#fff;text-align:center;">
-            <div class="card-body">
-                <div style="font-size:14px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px;">Gross Profit Margin</div>
-                <div style="font-size:48px;font-weight:800;letter-spacing:-1px;color:{{ $summary['margin_percentage'] >= 0 ? '#34d399' : '#f87171' }}">
-                    {{ number_format($summary['margin_percentage'], 2) }}%
+        <!-- Margin Cards -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+            <div class="card" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);color:#fff;text-align:center;flex:1;">
+                <div class="card-body">
+                    <div style="font-size:13px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px;">Gross Profit Margin</div>
+                    <div style="font-size:42px;font-weight:800;letter-spacing:-1px;color:{{ $summary['margin_percentage'] >= 0 ? '#34d399' : '#f87171' }}">
+                        {{ number_format($summary['margin_percentage'], 2) }}%
+                    </div>
                 </div>
-                <div style="font-size:13px;color:#cbd5e1;margin-top:8px;">
-                    Out of every ৳100 in sales, you keep ৳{{ number_format($summary['margin_percentage'], 2) }} in gross profit.
+            </div>
+            
+            <div class="card" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);color:#fff;text-align:center;flex:1;">
+                <div class="card-body">
+                    <div style="font-size:13px;color:#bfdbfe;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px;">Net Profit Margin</div>
+                    <div style="font-size:42px;font-weight:800;letter-spacing:-1px;color:{{ $summary['net_margin_percentage'] >= 0 ? '#60a5fa' : '#fca5a5' }}">
+                        {{ number_format($summary['net_margin_percentage'], 2) }}%
+                    </div>
                 </div>
             </div>
         </div>

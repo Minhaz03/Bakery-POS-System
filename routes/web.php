@@ -25,6 +25,8 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockLedgerController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseController;
 use App\Models\Plan;
 use Illuminate\Support\Facades\Route;
 
@@ -95,6 +97,7 @@ Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name
         'destroy' => 'categories.destroy',
     ]);
     Route::post('suppliers/{supplier}/pay', [SupplierController::class, 'payBalance'])->name('suppliers.pay');
+    Route::get('suppliers-payments', [SupplierController::class, 'paymentIndex'])->name('suppliers.payments.index');
     Route::put('suppliers/payments/{payment}', [SupplierController::class, 'updatePayment'])->name('suppliers.payments.update');
     Route::delete('suppliers/payments/{payment}', [SupplierController::class, 'destroyPayment'])->name('suppliers.payments.destroy');
 
@@ -108,6 +111,25 @@ Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name
         'edit' => 'suppliers.edit',
         'update' => 'suppliers.update',
         'destroy' => 'suppliers.destroy',
+    ]);
+
+    Route::resource('expense-categories', ExpenseCategoryController::class)->except(['create', 'show', 'edit'])->parameters([
+        'expense-categories' => 'expenseCategory',
+    ])->names([
+        'index' => 'expense-categories.index',
+        'store' => 'expense-categories.store',
+        'update' => 'expense-categories.update',
+        'destroy' => 'expense-categories.destroy',
+    ]);
+
+    Route::resource('expenses', ExpenseController::class)->names([
+        'index' => 'expenses.index',
+        'create' => 'expenses.create',
+        'store' => 'expenses.store',
+        'show' => 'expenses.show',
+        'edit' => 'expenses.edit',
+        'update' => 'expenses.update',
+        'destroy' => 'expenses.destroy',
     ]);
 
     Route::resource('customers', CustomerController::class)->parameters([

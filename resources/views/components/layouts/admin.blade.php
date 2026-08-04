@@ -810,6 +810,11 @@
                         class="bi bi-people nav-icon"></i> Suppliers</a>
             </div>
             <div class="nav-item">
+                <a href="{{ route('dashboard.suppliers.payments.index') }}"
+                    class="nav-link {{ request()->routeIs('dashboard.suppliers.payments.index') ? 'active' : '' }}"><i
+                        class="bi bi-cash-stack nav-icon"></i> Supplier Payments</a>
+            </div>
+            <div class="nav-item">
                 <a href="{{ route('dashboard.purchases') }}"
                     class="nav-link {{ request()->routeIs('dashboard.purchases*') ? 'active' : '' }}"><i
                         class="bi bi-receipt nav-icon"></i> Purchases</a>
@@ -830,6 +835,18 @@
                 <a href="{{ route('dashboard.customers') }}"
                     class="nav-link {{ request()->routeIs('dashboard.customers') ? 'active' : '' }}"><i
                         class="bi bi-person-badge nav-icon"></i> Customers</a>
+            </div>
+
+            <div class="nav-section-label">Expenses</div>
+            <div class="nav-item">
+                <a href="{{ route('dashboard.expenses.index') }}"
+                    class="nav-link {{ request()->routeIs('dashboard.expenses.*') ? 'active' : '' }}"><i
+                        class="bi bi-receipt-cutoff nav-icon"></i> All Expenses</a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('dashboard.expense-categories.index') }}"
+                    class="nav-link {{ request()->routeIs('dashboard.expense-categories.*') ? 'active' : '' }}"><i
+                        class="bi bi-tags nav-icon"></i> Expense Categories</a>
             </div>
 
             <div class="nav-section-label">Bakery</div>

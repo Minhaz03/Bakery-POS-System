@@ -31,6 +31,32 @@ class SupplierController extends Controller
         return view('dashboard.suppliers.index', compact('suppliers'));
     }
 
+    public function paymentIndex(Request $request): View
+    {
+        $query = SupplierPayment::with('supplier')->orderByDesc('payment_date')->orderByDesc('id');
+
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->supplier_id);
+        }
+
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('payment_date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('payment_date', '<=', $request->end_date);
+        }
+
+        $payments = $query->paginate(15)->withQueryString();
+        $suppliers = Supplier::orderBy('name')->get(['id', 'name']);
+
+        return view('dashboard.suppliers.payments', compact('payments', 'suppliers'));
+    }
+
     public function create(): View
     {
         return view('dashboard.suppliers.create');

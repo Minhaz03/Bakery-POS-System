@@ -7,6 +7,7 @@ use App\Models\Sale;
 use App\Models\Purchase;
 use App\Models\Product;
 use App\Models\ProductionOrder;
+use App\Models\Expense;
 use Carbon\Carbon;
 
 class ReportController extends Controller
@@ -143,13 +144,22 @@ class ReportController extends Controller
 
         $grossProfit = $totalSalesRevenue - $totalCOGS;
 
+        $totalExpenses = Expense::whereDate('expense_date', '>=', $startDate)
+            ->whereDate('expense_date', '<=', $endDate)
+            ->sum('amount');
+            
+        $netProfit = $grossProfit - $totalExpenses;
+
         $summary = [
             'start_date' => $startDate,
             'end_date' => $endDate,
             'revenue' => $totalSalesRevenue,
             'cogs' => $totalCOGS,
             'gross_profit' => $grossProfit,
-            'margin_percentage' => $totalSalesRevenue > 0 ? ($grossProfit / $totalSalesRevenue) * 100 : 0
+            'total_expenses' => $totalExpenses,
+            'net_profit' => $netProfit,
+            'margin_percentage' => $totalSalesRevenue > 0 ? ($grossProfit / $totalSalesRevenue) * 100 : 0,
+            'net_margin_percentage' => $totalSalesRevenue > 0 ? ($netProfit / $totalSalesRevenue) * 100 : 0
         ];
 
         return view('dashboard.reports.profit_loss', compact('summary'));
