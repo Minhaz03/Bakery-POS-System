@@ -341,7 +341,7 @@
                             <div class="form-group" style="margin-bottom:0;">
                                 <label class="form-label" for="stock_qty">Current Stock <span
                                         style="color:#ef4444;">*</span></label>
-                                <input type="number" step="0.001" name="stock_qty" id="stock_qty"
+                                <input type="number" step="0" name="stock_qty" id="stock_qty"
                                     class="form-control"
                                     value="{{ old('stock_qty', floatval($product->stock_qty)) }}" required
                                     min="0">
@@ -353,7 +353,7 @@
                             <div class="form-group" style="margin-bottom:0;">
                                 <label class="form-label" for="alert_qty">Low Stock Alert <span
                                         style="color:#ef4444;">*</span></label>
-                                <input type="number" step="0.001" name="alert_qty" id="alert_qty"
+                                <input type="number" step="0" name="alert_qty" id="alert_qty"
                                     class="form-control"
                                     value="{{ old('alert_qty', floatval($product->alert_qty)) }}" required
                                     min="0">
@@ -365,7 +365,7 @@
                             <div class="form-group" style="margin-bottom:0;">
                                 <label class="form-label" for="reorder_qty">Reorder Level <span
                                         style="color:#ef4444;">*</span></label>
-                                <input type="number" step="0.001" name="reorder_qty" id="reorder_qty"
+                                <input type="number" step="0" name="reorder_qty" id="reorder_qty"
                                     class="form-control"
                                     value="{{ old('reorder_qty', floatval($product->reorder_qty)) }}" required
                                     min="0">
