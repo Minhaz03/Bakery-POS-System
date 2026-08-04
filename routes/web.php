@@ -27,6 +27,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\NotificationController;
 use App\Models\Plan;
 use Illuminate\Support\Facades\Route;
 
@@ -71,6 +72,12 @@ Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name
     Route::post('pos-items', [ProductController::class, 'posItemStore'])->name('pos-items.store');
     Route::get('pos-items/{product}/edit', [ProductController::class, 'posItemEdit'])->name('pos-items.edit');
     Route::put('pos-items/{product}', [ProductController::class, 'posItemUpdate'])->name('pos-items.update');
+
+    // Notifications
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::delete('notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // CRUD Resources with custom route names matching the UI sidebar
     Route::resource('products', ProductController::class)->parameters([

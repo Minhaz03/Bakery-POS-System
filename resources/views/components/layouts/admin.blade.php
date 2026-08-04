@@ -982,7 +982,63 @@
             </button>
             <div class="topbar-title">{{ $title ?? 'Dashboard' }}</div>
             <div class="topbar-actions">
-                <a href="#" class="btn-topbar"><i class="bi bi-bell"></i></a>
+                <!-- Notifications Dropdown -->
+                <div x-data="{ open: false }" style="position:relative;" @click.away="open = false">
+                    <button type="button" @click="open = !open" class="btn-topbar" style="position:relative;border:none;background:transparent;cursor:pointer;">
+                        <i class="bi bi-bell"></i>
+                        @if($unreadNotificationsCount > 0)
+                            <span style="position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ef4444;border-radius:50%;"></span>
+                        @endif
+                    </button>
+                    
+                    <div x-show="open" style="display:none;position:absolute;right:0;top:calc(100% + 8px);width:320px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);z-index:50;">
+                        <div style="padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-weight:600;color:#0f172a;font-size:14px;">Notifications</span>
+                            @if($unreadNotificationsCount > 0)
+                                <form method="POST" action="{{ route('dashboard.notifications.markAllAsRead') }}" style="margin:0;">
+                                    @csrf
+                                    <button type="submit" style="background:none;border:none;color:#6366f1;font-size:12px;font-weight:500;cursor:pointer;padding:0;">Mark all read</button>
+                                </form>
+                            @endif
+                        </div>
+                        
+                        <div style="max-height:300px;overflow-y:auto;">
+                            @forelse($latestNotifications as $notification)
+                                <div style="padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;gap:12px;transition:background 0.2s;{{ !$notification->is_read ? 'background:#f8fafc;' : '' }}">
+                                    <div style="flex:1;min-width:0;">
+                                        <div style="font-size:13px;font-weight:{{ !$notification->is_read ? '600' : '500' }};color:#0f172a;margin-bottom:4px;display:flex;justify-content:space-between;">
+                                            {{ $notification->title }}
+                                            @if(!$notification->is_read)
+                                                <span style="width:6px;height:6px;background:#6366f1;border-radius:50%;display:inline-block;margin-top:4px;"></span>
+                                            @endif
+                                        </div>
+                                        <div style="font-size:12px;color:#64748b;line-height:1.4;margin-bottom:6px;">{{ $notification->message }}</div>
+                                        <div style="font-size:11px;color:#94a3b8;display:flex;justify-content:space-between;align-items:center;">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                            @if(!$notification->is_read)
+                                                <form method="POST" action="{{ route('dashboard.notifications.markAsRead', $notification) }}" style="margin:0;">
+                                                    @csrf
+                                                    <button type="submit" style="background:none;border:none;color:#6366f1;font-size:11px;cursor:pointer;padding:0;">Mark read</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div style="padding:24px 16px;text-align:center;color:#94a3b8;font-size:13px;">
+                                    <i class="bi bi-bell-slash" style="font-size:24px;display:block;margin-bottom:8px;color:#cbd5e1;"></i>
+                                    No notifications yet.
+                                </div>
+                            @endforelse
+                        </div>
+                        
+                        <div style="padding:8px;border-top:1px solid #f1f5f9;text-align:center;">
+                            <a href="{{ route('dashboard.notifications.index') }}" style="display:block;padding:8px;color:#6366f1;font-size:13px;font-weight:500;text-decoration:none;border-radius:6px;transition:background 0.2s;">
+                                View all notifications
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 <!-- Profile Dropdown -->
                 <div class="profile-dropdown-wrap" id="profileDropdownWrap">
                     <button type="button" class="btn-topbar" id="profileDropdownBtn"
