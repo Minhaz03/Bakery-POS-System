@@ -718,6 +718,27 @@
                 visibility: visible;
             }
         }
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 12px;
+                gap: 10px;
+                height: 56px;
+            }
+            .topbar-title {
+                font-size: 15px;
+            }
+            .page-content {
+                padding: 16px 12px;
+            }
+            .btn-topbar {
+                padding: 6px 10px;
+            }
+        }
+        @media (max-width: 576px) {
+            .hide-on-mobile {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -953,7 +974,7 @@
                             style="width:28px;height:28px;border-radius:50%;background:var(--primary);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </span>
-                        <span
+                        <span class="hide-on-mobile"
                             style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ Auth::user()->name }}</span>
                         <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                     </button>

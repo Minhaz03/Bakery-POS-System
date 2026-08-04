@@ -1,14 +1,72 @@
 <x-layouts.admin title="Dashboard">
+    <style>
+        .dashboard-grid-main {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+        .dashboard-grid-half {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        .dashboard-grid-half-mt {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 18px;
+        }
+        .welcome-banner {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 12px;
+            padding: 24px;
+            color: #fff;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+            gap: 16px;
+        }
+        .welcome-banner-actions {
+            display: flex;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        @media (max-width: 992px) {
+            .dashboard-grid-main {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .dashboard-grid-half,
+            .dashboard-grid-half-mt {
+                grid-template-columns: 1fr;
+            }
+            .welcome-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .welcome-banner-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+            .welcome-banner-actions a {
+                text-align: center;
+            }
+        }
+    </style>
+
     @if (!$hasProducts)
-        <div
-            style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 12px; padding: 24px; color: #fff; margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);">
+        <div class="welcome-banner">
             <div>
                 <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;">Welcome to your
                     POS System! 🎉</h2>
                 <p style="margin: 0; font-size: 14.5px; opacity: 0.9;">Your dashboard is currently empty. Let's get
                     started by adding your first products and categories so you can start selling.</p>
             </div>
-            <div style="display: flex; gap: 12px; flex-shrink: 0;">
+            <div class="welcome-banner-actions">
                 <a href="{{ route('dashboard.categories.create') }}"
                     style="background: rgba(255,255,255,0.2); color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600; text-decoration: none; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.3);"
                     onmouseover="this.style.background='rgba(255,255,255,0.3)'"
@@ -84,7 +142,7 @@
     </div>
 
     <!-- Main Grid: Chart + Quick Actions -->
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:20px;">
+    <div class="dashboard-grid-main">
         <!-- Sales Chart -->
         <div class="card">
             <div class="card-header">
@@ -164,7 +222,7 @@
     </div>
 
     <!-- Bottom Row: Recent Sales + Production Schedule -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+    <div class="dashboard-grid-half">
         <div class="card">
             <div class="card-header">
                 <i class="bi bi-receipt" style="color:#10b981;font-size:18px;"></i>
@@ -263,7 +321,7 @@
     </div>
 
     <!-- Extra Data Row: Top Selling Products + Low Stock Items -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;">
+    <div class="dashboard-grid-half-mt">
         <div class="card">
             <div class="card-header">
                 <i class="bi bi-star-fill" style="color:#ef4444;font-size:18px;"></i>
