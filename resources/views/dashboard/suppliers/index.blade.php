@@ -114,6 +114,8 @@
                             </td>
                             <td style="padding:14px 20px;text-align:center;font-size:16px;">
                                 <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+                                    <a href="{{ route('dashboard.suppliers.show', $supplier) }}" style="color:#0ea5e9;"
+                                        title="View Supplier"><i class="bi bi-eye"></i></a>
                                     <a href="{{ route('dashboard.suppliers.edit', $supplier) }}" style="color:#6366f1;"
                                         title="Edit Supplier"><i class="bi bi-pencil-square"></i></a>
                                     <form method="POST" action="{{ route('dashboard.suppliers.destroy', $supplier) }}"

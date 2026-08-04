@@ -94,6 +94,9 @@ Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name
         'update' => 'categories.update',
         'destroy' => 'categories.destroy',
     ]);
+    Route::post('suppliers/{supplier}/pay', [SupplierController::class, 'payBalance'])->name('suppliers.pay');
+    Route::put('suppliers/payments/{payment}', [SupplierController::class, 'updatePayment'])->name('suppliers.payments.update');
+    Route::delete('suppliers/payments/{payment}', [SupplierController::class, 'destroyPayment'])->name('suppliers.payments.destroy');
 
     Route::resource('suppliers', SupplierController::class)->parameters([
         'suppliers' => 'supplier',

@@ -21,4 +21,14 @@ class Supplier extends Model
             'is_active' => 'boolean',
         ];
     }
+
+    public function purchases(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
+    public function payments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SupplierPayment::class);
+    }
 }
