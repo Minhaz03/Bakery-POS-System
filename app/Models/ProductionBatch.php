@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\ProductionOrder;
+use App\Traits\BelongsToTenant;
 
 class ProductionBatch extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, BelongsToTenant;
 
     protected $fillable = [
         'production_order_id',
         'batch_number',
         'qty',
+        'scheduled_at',
         'manufacturing_date',
         'expiry_date',
     ];

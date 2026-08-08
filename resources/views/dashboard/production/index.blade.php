@@ -29,7 +29,7 @@
                                 <select name="recipe_id" class="form-control" required>
                                     <option value="">Select Recipe...</option>
                                     @foreach ($recipes as $recipe)
-                                        <option value="{{ $recipe->id }}">{{ $recipe->name }} (Yields:
+                                        <option value="{{ $recipe->id }}">{{ $recipe->name }} (Output:
                                             {{ $recipe->yield_qty }} {{ $recipe->yield_unit }})</option>
                                     @endforeach
                                 </select>
@@ -132,11 +132,26 @@
                                         @csrf
                                         @method('PATCH')
                                         <button type="button"
-                                            onclick="confirmAction('cancel', {{ $batch['real_id'] }}, '{{ $batch['id'] }}')"
-                                            style="background:none;border:none;color:#ef4444;cursor:pointer;"
-                                            title="Cancel Batch"><i class="bi bi-x-circle"></i></button>
+                                            onclick="confirmCancel({{ $batch['real_id'] }}, '{{ $batch['id'] }}')"
+                                            style="background:none;border:none;color:#d97706;margin-right:12px;cursor:pointer;"
+                                            title="Cancel Order"><i class="bi bi-x-octagon"></i></button>
                                     </form>
                                 @endif
+                                @if ($batch['status'] !== 'Completed')
+                                    <a href="{{ route('dashboard.production.edit', $batch['real_id']) }}"
+                                        style="color:#0ea5e9;margin-right:12px;" title="Edit Order"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                @endif
+                                <form id="form-delete-{{ $batch['real_id'] }}"
+                                    action="{{ route('dashboard.production.destroy', $batch['real_id']) }}"
+                                    method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button"
+                                        onclick="confirmDeleteProduction({{ $batch['real_id'] }}, '{{ $batch['id'] }}')"
+                                        style="background:none;border:none;color:#ef4444;cursor:pointer;"
+                                        title="Delete Order"><i class="bi bi-trash"></i></button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -211,25 +226,36 @@
             });
         }
 
-        function confirmAction(action, realId, batchId) {
-            const title = 'Cancel Batch?';
-            const text = `Batch <strong style="font-family:monospace;">${batchId}</strong> will be cancelled.`;
-            const confirmColor = '#ef4444';
-            const confirmText = 'Yes, Cancel it!';
-
+        function confirmCancel(realId, refId) {
             Swal.fire({
-                title: title,
-                html: `<p style="color:#475569;font-size:14px;">${text}</p>`,
+                title: 'Cancel Order?',
+                text: "Are you sure you want to cancel order " + refId + "?",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: confirmColor,
+                confirmButtonColor: '#d97706',
                 cancelButtonColor: '#64748b',
-                confirmButtonText: confirmText,
+                confirmButtonText: 'Yes, cancel it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById(`form-${action}-${realId}`).submit();
+                    document.getElementById('form-cancel-' + realId).submit();
                 }
-            });
+            })
+        }
+
+        function confirmDeleteProduction(realId, refId) {
+            Swal.fire({
+                title: 'Delete Order?',
+                html: `Are you sure you want to delete order <strong>${refId}</strong>?<br><br>If this order is completed, its stock deductions/additions will be reversed!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('form-delete-' + realId).submit();
+                }
+            })
         }
     </script>
 

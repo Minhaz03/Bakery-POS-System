@@ -20,8 +20,18 @@ class UnitController extends Controller
     public function store(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:units,name',
-            'short_name' => 'required|string|max:20|unique:units,short_name',
+            'name' => [
+                'required', 'string', 'max:255',
+                \Illuminate\Validation\Rule::unique('units')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })
+            ],
+            'short_name' => [
+                'required', 'string', 'max:20',
+                \Illuminate\Validation\Rule::unique('units')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })
+            ],
             'base_unit_id' => 'nullable|exists:units,id',
             'operator' => 'required|in:*,/',
             'conversion_rate' => 'required|numeric|min:0.0001',
@@ -43,8 +53,18 @@ class UnitController extends Controller
     public function update(Request $request, Unit $unit): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:units,name,' . $unit->id,
-            'short_name' => 'required|string|max:20|unique:units,short_name,' . $unit->id,
+            'name' => [
+                'required', 'string', 'max:255',
+                \Illuminate\Validation\Rule::unique('units')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })->ignore($unit->id)
+            ],
+            'short_name' => [
+                'required', 'string', 'max:20',
+                \Illuminate\Validation\Rule::unique('units')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })->ignore($unit->id)
+            ],
             'base_unit_id' => 'nullable|exists:units,id',
             'operator' => 'required|in:*,/',
             'conversion_rate' => 'required|numeric|min:0.0001',

@@ -46,7 +46,7 @@
                         </div>
                         <div style="text-align:center;background:#f8fafc;border-radius:10px;padding:14px 8px;border:1px solid #f1f5f9;">
                             <i class="bi bi-boxes" style="font-size:22px;color:#0ea5e9;display:block;margin-bottom:4px;"></i>
-                            <div style="font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;">Yield</div>
+                            <div style="font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;">Expected Output</div>
                             <div style="font-size:14px;font-weight:700;color:#0f172a;margin-top:2px;">{{ $recipe->yield_qty }} {{ $recipe->yield_unit }}</div>
                         </div>
                         <div style="text-align:center;background:#f0fdf4;border-radius:10px;padding:14px 8px;border:1px solid #86efac;">
@@ -150,7 +150,7 @@
                         <span style="font-weight:700;color:#0f172a;">৳{{ number_format($recipe->estimated_cost, 2) }}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#475569;">
-                        <span>Yield Quantity</span>
+                        <span>Expected Output</span>
                         <span style="font-weight:700;color:#0f172a;">{{ $recipe->yield_qty }} {{ $recipe->yield_unit }}</span>
                     </div>
                     <hr style="border:0;border-top:1px solid #e2e8f0;margin:4px 0;">

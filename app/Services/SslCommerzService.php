@@ -13,11 +13,20 @@ class SslCommerzService
 
     public function __construct()
     {
-        $this->storeId = \App\Models\Setting::get('sslcommerz_store_id') ?: config('sslcommerz.store_id');
-        $this->storePassword = \App\Models\Setting::get('sslcommerz_store_password') ?: config('sslcommerz.store_password');
+        $getGlobalSetting = function($key) {
+            $setting = \App\Models\Setting::withoutGlobalScope(\App\Scopes\TenantScope::class)
+                ->where('tenant_id', 1)
+                ->where('key', $key)
+                ->first();
+            return $setting ? $setting->value : null;
+        };
+
+        $this->storeId = $getGlobalSetting('sslcommerz_store_id') ?: config('sslcommerz.store_id');
+        $this->storePassword = $getGlobalSetting('sslcommerz_store_password') ?: config('sslcommerz.store_password');
         
-        $isSandbox = \App\Models\Setting::get('sslcommerz_is_sandbox');
+        $isSandbox = $getGlobalSetting('sslcommerz_is_sandbox');
         if ($isSandbox !== null) {
+            $isSandbox = filter_var($isSandbox, FILTER_VALIDATE_BOOLEAN);
             $this->apiDomain = $isSandbox 
                 ? 'https://sandbox.sslcommerz.com' 
                 : 'https://securepay.sslcommerz.com';

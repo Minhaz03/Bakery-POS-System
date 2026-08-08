@@ -104,6 +104,27 @@
             padding: 16px 12px;
         }
 
+        /* Premium Webkit Scrollbar for Sidebar Nav */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 6px !important;
+            height: 6px !important;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1) !important;
+            border-radius: 10px !important;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #818cf8 0%, #4f46e5 100%) !important;
+            border-radius: 10px !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #6366f1 0%, #4338ca 100%) !important;
+        }
+
         .nav-section-label {
             font-size: 10px;
             font-weight: 600;

@@ -30,7 +30,7 @@ class StockLedgerSeeder extends Seeder
             $movements[] = [
                 'product_id' => $bun->id,
                 'type' => 'Production (+)',
-                'qty' => 30.000,
+                'quantity' => 30.000,
                 'user_id' => $userId,
                 'notes' => 'Morning batch production complete.',
                 'created_at' => now()->subDay()->setHour(9)->setMinute(30),
@@ -38,7 +38,7 @@ class StockLedgerSeeder extends Seeder
             $movements[] = [
                 'product_id' => $bun->id,
                 'type' => 'POS Sale (-)',
-                'qty' => -5.000,
+                'quantity' => -5.000,
                 'user_id' => $userId,
                 'notes' => 'Sale receipt INV-08490.',
                 'created_at' => now()->subDay()->setHour(10)->setMinute(15),
@@ -49,7 +49,7 @@ class StockLedgerSeeder extends Seeder
             $movements[] = [
                 'product_id' => $toast->id,
                 'type' => 'POS Sale (-)',
-                'qty' => -12.000,
+                'quantity' => -12.000,
                 'user_id' => $userId,
                 'notes' => 'Bulk sale POS counter.',
                 'created_at' => now()->subDay()->setHour(11)->setMinute(30),
@@ -60,7 +60,7 @@ class StockLedgerSeeder extends Seeder
             $movements[] = [
                 'product_id' => $poundCake->id,
                 'type' => 'Stock Audit (Adj)',
-                'qty' => -2.000,
+                'quantity' => -2.000,
                 'user_id' => $userId,
                 'notes' => 'Inventory count correction: damaged display slice.',
                 'created_at' => now()->subDay()->setHour(13)->setMinute(0),
@@ -71,7 +71,7 @@ class StockLedgerSeeder extends Seeder
             $movements[] = [
                 'product_id' => $flour->id,
                 'type' => 'Purchase (+)',
-                'qty' => 150.000,
+                'quantity' => 150.000,
                 'user_id' => $userId,
                 'notes' => 'Received from Premium Flour Mills (PO-2026-001).',
                 'created_at' => now()->subDays(2)->setHour(14)->setMinute(0),
@@ -79,7 +79,7 @@ class StockLedgerSeeder extends Seeder
             $movements[] = [
                 'product_id' => $flour->id,
                 'type' => 'Production (-)',
-                'qty' => -10.000,
+                'quantity' => -10.000,
                 'user_id' => $userId,
                 'notes' => 'Used in Breads production batch.',
                 'created_at' => now()->subDay()->setHour(8)->setMinute(0),
@@ -90,7 +90,7 @@ class StockLedgerSeeder extends Seeder
             $movements[] = [
                 'product_id' => $box->id,
                 'type' => 'Wastage (-)',
-                'qty' => -4.000,
+                'quantity' => -4.000,
                 'user_id' => $userId,
                 'notes' => 'Damaged by liquid spill in storage area.',
                 'created_at' => now()->subDay()->setHour(17)->setMinute(0),

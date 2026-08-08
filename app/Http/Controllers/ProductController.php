@@ -16,8 +16,7 @@ class ProductController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Product::with(['category', 'brand', 'unit', 'tax'])
-            ->where('is_pos_enabled', false);
+        $query = Product::with(['category', 'brand', 'unit', 'tax']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -81,8 +80,18 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|max:100|unique:products,sku',
-            'barcode' => 'nullable|string|max:100|unique:products,barcode',
+            'sku' => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })
+            ],
+            'barcode' => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })
+            ],
             'category_id' => 'nullable|exists:categories,id',
             'brand_id' => 'nullable|exists:brands,id',
             'unit_id' => 'nullable|exists:units,id',
@@ -151,8 +160,18 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|max:100|unique:products,sku,' . $product->id,
-            'barcode' => 'nullable|string|max:100|unique:products,barcode,' . $product->id,
+            'sku' => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })->ignore($product->id)
+            ],
+            'barcode' => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })->ignore($product->id)
+            ],
             'category_id' => 'nullable|exists:categories,id',
             'brand_id' => 'nullable|exists:brands,id',
             'unit_id' => 'nullable|exists:units,id',
@@ -306,8 +325,18 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
-            'sku'          => 'nullable|string|max:100|unique:products,sku',
-            'barcode'      => 'nullable|string|max:100|unique:products,barcode',
+            'sku'          => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })
+            ],
+            'barcode'      => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })
+            ],
             'category_id'  => 'nullable|exists:categories,id',
             'brand_id'     => 'nullable|exists:brands,id',
             'unit_id'      => 'nullable|exists:units,id',
@@ -321,11 +350,12 @@ class ProductController extends Controller
             'alert_qty'    => 'required|numeric|min:0',
             'reorder_qty'  => 'required|numeric|min:0',
             'is_active'    => 'nullable|boolean',
-            'product_type' => 'required|in:ready_made,finished_product',
+            'product_type' => 'required|in:raw_material,ready_made,finished_product',
         ]);
 
-        // Always force POS-enabled
-        $validated['is_pos_enabled'] = true;
+        // Automatically set POS-enabled based on product type
+        // Raw Materials are not sold on the POS terminal
+        $validated['is_pos_enabled'] = ($validated['product_type'] !== 'raw_material');
         $validated['is_active']      = $request->has('is_active');
 
         if (empty($validated['sku'])) {
@@ -351,7 +381,7 @@ class ProductController extends Controller
             ]);
         }
 
-        return redirect()->route('dashboard.pos-items')->with('success', 'POS Item created successfully!');
+        return redirect()->route('dashboard.products')->with('success', 'Product created successfully!');
     }
 
     public function posItemEdit(Product $product): View
@@ -373,8 +403,18 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
-            'sku'          => 'nullable|string|max:100|unique:products,sku,' . $product->id,
-            'barcode'      => 'nullable|string|max:100|unique:products,barcode,' . $product->id,
+            'sku'          => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })->ignore($product->id)
+            ],
+            'barcode'      => [
+                'nullable', 'string', 'max:100',
+                \Illuminate\Validation\Rule::unique('products')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })->ignore($product->id)
+            ],
             'category_id'  => 'nullable|exists:categories,id',
             'brand_id'     => 'nullable|exists:brands,id',
             'unit_id'      => 'nullable|exists:units,id',
@@ -388,11 +428,11 @@ class ProductController extends Controller
             'alert_qty'    => 'required|numeric|min:0',
             'reorder_qty'  => 'required|numeric|min:0',
             'is_active'    => 'nullable|boolean',
-            'product_type' => 'required|in:ready_made,finished_product',
+            'product_type' => 'required|in:raw_material,ready_made,finished_product',
         ]);
 
-        // Always keep POS-enabled
-        $validated['is_pos_enabled'] = true;
+        // Automatically set POS-enabled based on product type
+        $validated['is_pos_enabled'] = ($validated['product_type'] !== 'raw_material');
         $validated['is_active']      = $request->has('is_active');
 
         if (empty($validated['sku'])) {
@@ -423,7 +463,7 @@ class ProductController extends Controller
             ]);
         }
 
-        return redirect()->route('dashboard.pos-items')->with('success', 'POS Item updated successfully!');
+        return redirect()->route('dashboard.products')->with('success', 'Product updated successfully!');
     }
 
     public function toggleStock(Product $product): RedirectResponse

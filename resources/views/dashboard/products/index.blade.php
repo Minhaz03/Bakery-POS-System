@@ -119,6 +119,34 @@
         </div>
     </div>
 
+    {{-- -- Stats Row -- --}}
+    <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;">
+        @php
+            $total = $products->total();
+            $inStock = $products->getCollection()->where('stock_qty', '>', 0)->count();
+            $lowStock = $products
+                ->getCollection()
+                ->filter(fn($p) => $p->stock_qty > 0 && $p->stock_qty <= $p->alert_qty)
+                ->count();
+            $outStock = $products->getCollection()->where('stock_qty', '<=', 0)->count();
+        @endphp
+        @foreach ([['icon' => 'bi-box-seam', 'bg' => 'rgba(99,102,241,0.1)', 'color' => '#6366f1', 'label' => 'Total Products', 'val' => $total], ['icon' => 'bi-check-circle-fill', 'bg' => 'rgba(16,185,129,0.1)', 'color' => '#10b981', 'label' => 'In Stock', 'val' => $inStock], ['icon' => 'bi-exclamation-triangle-fill', 'bg' => 'rgba(245,158,11,0.1)', 'color' => '#f59e0b', 'label' => 'Low Stock', 'val' => $lowStock], ['icon' => 'bi-x-circle-fill', 'bg' => 'rgba(239,68,68,0.1)', 'color' => '#ef4444', 'label' => 'Out of Stock', 'val' => $outStock]] as $stat)
+            <div
+                style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;min-width:150px;flex:1;">
+                <div
+                    style="width:38px;height:38px;border-radius:9px;background:{{ $stat['bg'] }};display:flex;align-items:center;justify-content:center;color:{{ $stat['color'] }};font-size:18px;">
+                    <i class="bi {{ $stat['icon'] }}"></i>
+                </div>
+                <div>
+                    <div
+                        style="font-size:11px;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;">
+                        {{ $stat['label'] }}</div>
+                    <div style="font-size:22px;font-weight:800;color:#0f172a;">{{ $stat['val'] }}</div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
     <!-- Products Table -->
     <div class="card">
         <div class="card-body" style="padding:0;overflow-x:auto;">

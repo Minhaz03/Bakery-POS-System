@@ -91,6 +91,9 @@ class BillingController extends Controller
                 'status' => 'active',
                 'starts_at' => now(),
                 'ends_at' => $endsAt,
+                'payment_status' => 'paid',
+                'payment_method' => $validation['card_type'] ?? 'SSLCommerz',
+                'gateway_response' => $validation,
             ]);
 
             return redirect()->route('dashboard.billing')->with('success', 'Payment successful! Subscription activated.');
@@ -164,6 +167,9 @@ class BillingController extends Controller
                 'status' => 'active',
                 'starts_at' => now(),
                 'ends_at' => $endsAt,
+                'payment_status' => 'paid',
+                'payment_method' => $validation['card_type'] ?? 'SSLCommerz',
+                'gateway_response' => $validation,
             ]);
 
             return response()->json(['status' => 'success']);

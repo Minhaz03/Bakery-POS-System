@@ -215,6 +215,9 @@ Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name
     Route::get('/production', [ProductionController::class, 'production'])->name('production');
     Route::get('/production/{order}', [ProductionController::class, 'show'])->name('production.show');
     Route::post('/production', [ProductionController::class, 'store'])->name('production.store');
+    Route::get('/production/{order}/edit', [ProductionController::class, 'edit'])->name('production.edit');
+    Route::put('/production/{order}', [ProductionController::class, 'update'])->name('production.update');
+    Route::delete('/production/{order}', [ProductionController::class, 'destroy'])->name('production.destroy');
     Route::patch('/production/{order}/start', [ProductionController::class, 'start'])->name('production.start');
     Route::patch('/production/{order}/complete', [ProductionController::class, 'complete'])->name('production.complete');
     Route::patch('/production/{order}/cancel', [ProductionController::class, 'cancel'])->name('production.cancel');

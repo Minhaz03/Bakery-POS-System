@@ -100,7 +100,7 @@
                         @endif
                         <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#475569;">
                             <i class="bi bi-boxes" style="color:#0ea5e9;"></i>
-                            <span><strong>Yield:</strong> {{ $recipe->yield_qty }} {{ $recipe->yield_unit }}</span>
+                            <span><strong>Expected Output:</strong> {{ $recipe->yield_qty }} {{ $recipe->yield_unit }}</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;">
                             <i class="bi bi-cash-stack" style="color:#16a34a;"></i>

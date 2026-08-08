@@ -785,19 +785,24 @@
 
             <div class="nav-section-label">Inventory</div>
             <div class="nav-item">
-                {{-- <a href="{{ route('dashboard.products') }}"
+                <a href="{{ route('dashboard.products') }}"
                     class="nav-link {{ request()->routeIs('dashboard.products') ? 'active' : '' }}"><i
-                        class="bi bi-box-seam nav-icon"></i> Products</a> --}}
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.pos-items') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.pos-items') ? 'active' : '' }}"><i
-                        class="bi bi-grid-3x3-gap nav-icon"></i> POS Items</a>
+                        class="bi bi-box-seam nav-icon"></i> Products</a>
             </div>
             <div class="nav-item">
                 <a href="{{ route('dashboard.categories') }}"
                     class="nav-link {{ request()->routeIs('dashboard.categories') ? 'active' : '' }}"><i
                         class="bi bi-tags nav-icon"></i> Categories</a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('dashboard.units') }}"
+                    class="nav-link {{ request()->routeIs('dashboard.units') ? 'active' : '' }}"><i
+                        class="bi bi-rulers nav-icon"></i> Units</a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('dashboard.brands') }}"
+                    class="nav-link {{ request()->routeIs('dashboard.brands') ? 'active' : '' }}"><i
+                        class="bi bi-star nav-icon"></i> Brands</a>
             </div>
             <div class="nav-item">
                 <a href="{{ route('dashboard.stock-ledger') }}"

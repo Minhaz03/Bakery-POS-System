@@ -156,6 +156,19 @@
             @endif
         </div>
     </div>
+    
+    @if($subscription->gateway_response)
+    <!-- Gateway Response JSON -->
+    <div class="card mt-4" style="margin-top: 24px;">
+        <div class="card-header">
+            <i class="bi bi-braces text-secondary" style="font-size:18px;"></i>
+            <span class="card-title">Payment Gateway Response (Raw)</span>
+        </div>
+        <div class="card-body" style="background-color: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+            <pre style="margin: 0; font-size: 13px; color: #334155; overflow-x: auto;"><code>{{ json_encode($subscription->gateway_response, JSON_PRETTY_PRINT) }}</code></pre>
+        </div>
+    </div>
+    @endif
     @endif
 
 </x-layouts.saas>

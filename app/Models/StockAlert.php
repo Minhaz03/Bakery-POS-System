@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class StockAlert extends Model
 {
+    use BelongsToTenant;
+    
     protected $fillable = [
         'product_id',
         'variant_id',

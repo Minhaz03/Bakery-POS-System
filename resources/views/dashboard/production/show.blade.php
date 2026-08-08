@@ -1,109 +1,149 @@
-<x-layouts.admin title="Batch Details - {{ $batch->batch_code }}">
+<x-layouts.admin title="Order Details - {{ $order->reference_no }}">
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
         <div>
             <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
-                Production Batch: <span style="font-family:monospace;color:#6366f1;">{{ $batch->batch_code }}</span>
+                Production Order: <span style="font-family:monospace;color:#6366f1;">{{ $order->reference_no }}</span>
             </h2>
             <p style="font-size:13.5px;color:#64748b;margin:4px 0 0 0;">Full details of this production run, including ingredients consumed and output.</p>
         </div>
-        <a href="{{ route('dashboard.production') }}" class="btn btn-primary">
-            <i class="bi bi-arrow-left"></i> Back to Production
-        </a>
+        <div style="display:flex;gap:10px;">
+            <a href="{{ route('dashboard.production') }}" class="btn btn-outline" style="color:#64748b;border-color:#e2e8f0;">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            @if($order->status !== 'completed')
+            <a href="{{ route('dashboard.production.edit', $order) }}" class="btn btn-primary" style="text-decoration:none;">
+                <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            @endif
+            <form id="del-order-form" method="POST" action="{{ route('dashboard.production.destroy', $order) }}" style="display:none;">@csrf @method('DELETE')</form>
+            <button type="button" onclick="confirmDeleteOrder()" class="btn btn-outline" style="color:#ef4444;border-color:#fecaca;"><i class="bi bi-trash"></i> Delete</button>
+        </div>
     </div>
 
-    <!-- Batch Summary Card -->
+    <script>
+        function confirmDeleteOrder() {
+            Swal.fire({
+                title: 'Delete Order?',
+                html: `Are you sure you want to delete order <strong>{{ $order->reference_no }}</strong>?<br><br>If this order is completed, its stock deductions/additions will be reversed!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('del-order-form').submit();
+                }
+            })
+        }
+    </script>
+
+    <!-- Order Summary Card -->
     <div class="card" style="margin-bottom:24px;">
         <div class="card-header" style="background:#f8fafc;padding:16px 20px;">
             <span style="font-weight:700;font-size:16px;display:flex;align-items:center;">
-                <i class="bi bi-info-circle" style="color:var(--primary);margin-right:8px;"></i> Batch Overview
+                <i class="bi bi-info-circle" style="color:var(--primary);margin-right:8px;"></i> Order Overview
             </span>
         </div>
         <div class="card-body" style="padding:24px;">
             <table style="width:100%;border-collapse:collapse;font-size:14.5px;">
                 <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:14px 0;color:#64748b;font-weight:500;width:200px;">Batch Code</td>
-                    <td style="padding:14px 0;font-weight:700;color:#0f172a;font-family:monospace;">{{ $batch->batch_code }}</td>
+                    <td style="padding:14px 0;color:#64748b;font-weight:500;width:200px;">Reference No</td>
+                    <td style="padding:14px 0;font-weight:700;color:#0f172a;font-family:monospace;">{{ $order->reference_no }}</td>
                 </tr>
                 <tr style="border-bottom:1px solid #f1f5f9;">
                     <td style="padding:14px 0;color:#64748b;font-weight:500;">Recipe</td>
                     <td style="padding:14px 0;font-weight:700;color:#1e293b;">
                         <i class="bi bi-egg-fried" style="color:var(--primary);margin-right:6px;"></i>
-                        {{ $batch->recipe ? $batch->recipe->name : 'Unknown Recipe' }}
+                        {{ $order->recipe ? $order->recipe->name : 'Unknown Recipe' }}
                     </td>
                 </tr>
                 <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Target Quantity</td>
-                    <td style="padding:14px 0;font-weight:600;">{{ $batch->qty }} items</td>
+                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Planned Quantity</td>
+                    <td style="padding:14px 0;font-weight:600;">{{ $order->planned_quantity }} items</td>
                 </tr>
+                @if($order->status === 'completed')
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Actual Quantity</td>
+                    <td style="padding:14px 0;font-weight:600;">{{ $order->actual_quantity }} items</td>
+                </tr>
+                @endif
                 <tr style="border-bottom:1px solid #f1f5f9;">
                     <td style="padding:14px 0;color:#64748b;font-weight:500;">Status</td>
                     <td style="padding:14px 0;">
-                        @if($batch->status === 'Completed')
+                        @if($order->status === 'completed')
                             <span style="background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;">
                                 <i class="bi bi-check-circle-fill"></i> Completed
                             </span>
-                        @elseif($batch->status === 'In Progress')
+                        @elseif($order->status === 'in_progress')
                             <span style="background:#eff6ff;color:#1d4ed8;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;">
                                 <i class="bi bi-arrow-repeat"></i> In Progress
                             </span>
-                        @elseif($batch->status === 'Cancelled')
+                        @elseif($order->status === 'cancelled')
                             <span style="background:#fee2e2;color:#ef4444;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;">
                                 <i class="bi bi-x-circle-fill"></i> Cancelled
                             </span>
                         @else
                             <span style="background:#f1f5f9;color:#475569;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;">
-                                <i class="bi bi-calendar-event"></i> Scheduled
+                                <i class="bi bi-calendar-event"></i> Planned
                             </span>
                         @endif
                     </td>
                 </tr>
                 <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Scheduled At</td>
+                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Planned Date</td>
                     <td style="padding:14px 0;color:#64748b;">
-                        <i class="bi bi-clock"></i> {{ $batch->scheduled_at ? $batch->scheduled_at->format('Y-m-d h:i A') : '—' }}
+                        <i class="bi bi-clock"></i> {{ $order->planned_date ? \Carbon\Carbon::parse($order->planned_date)->format('Y-m-d') : '—' }}
                     </td>
                 </tr>
-                @if($batch->completed_at)
+                @if($order->produced_at)
                 <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Completed At</td>
+                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Produced At</td>
                     <td style="padding:14px 0;color:#15803d;font-weight:600;">
-                        <i class="bi bi-check2-circle"></i> {{ $batch->completed_at->format('Y-m-d h:i A') }}
+                        <i class="bi bi-check2-circle"></i> {{ \Carbon\Carbon::parse($order->produced_at)->format('Y-m-d h:i A') }}
                     </td>
                 </tr>
                 @endif
-                @if($batch->manufacturing_date)
-                <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Manufacturing Date</td>
-                    <td style="padding:14px 0;">{{ $batch->manufacturing_date }}</td>
-                </tr>
+                
+                @php $firstBatch = $order->batches->first(); @endphp
+                @if($firstBatch)
+                    @if($firstBatch->manufacturing_date)
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:14px 0;color:#64748b;font-weight:500;">Manufacturing Date</td>
+                        <td style="padding:14px 0;">{{ \Carbon\Carbon::parse($firstBatch->manufacturing_date)->format('Y-m-d') }}</td>
+                    </tr>
+                    @endif
+                    @if($firstBatch->expiry_date)
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:14px 0;color:#64748b;font-weight:500;">Expiry Date</td>
+                        <td style="padding:14px 0;color:#dc2626;font-weight:600;">{{ \Carbon\Carbon::parse($firstBatch->expiry_date)->format('Y-m-d') }}</td>
+                    </tr>
+                    @endif
                 @endif
-                @if($batch->expiry_date)
+
+                @php $totalWaste = $order->ingredients->sum('waste_qty'); @endphp
+                @if($totalWaste > 0)
                 <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Expiry Date</td>
-                    <td style="padding:14px 0;color:#dc2626;font-weight:600;">{{ $batch->expiry_date }}</td>
-                </tr>
-                @endif
-                @if($batch->wastage_qty > 0)
-                <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Wastage</td>
+                    <td style="padding:14px 0;color:#64748b;font-weight:500;">Total Wastage</td>
                     <td style="padding:14px 0;color:#d97706;font-weight:600;">
-                        {{ $batch->wastage_qty }} items
-                        @if($batch->wastage_notes)
-                            <span style="color:#94a3b8;font-weight:400;"> — {{ $batch->wastage_notes }}</span>
+                        {{ $totalWaste }} items
+                        @if($order->notes)
+                            <span style="color:#94a3b8;font-weight:400;"> — {{ $order->notes }}</span>
                         @endif
                     </td>
                 </tr>
                 @endif
-                @if($batch->recipe && $batch->recipe->product)
+                
+                @if($order->recipe && $order->recipe->product)
                 <tr>
                     <td style="padding:14px 0;color:#64748b;font-weight:500;">Output Product</td>
                     <td style="padding:14px 0;font-weight:700;color:#6366f1;">
                         <i class="bi bi-box-seam"></i>
-                        {{ $batch->recipe->product->name }}
-                        @if($batch->status === 'Completed')
+                        {{ $order->recipe->product->name }}
+                        @if($order->status === 'completed')
                             <span style="font-weight:400;color:#64748b;font-size:13px;margin-left:4px;">
-                                (+{{ $batch->qty - ($batch->wastage_qty ?? 0) }} units added to stock)
+                                (+{{ $order->actual_quantity }} units added to stock)
                             </span>
                         @endif
                     </td>
@@ -114,7 +154,7 @@
     </div>
 
     <!-- Ingredients Consumed -->
-    @if($batch->consumptions->count() > 0)
+    @if($order->ingredients->count() > 0)
     <div class="card">
         <div class="card-header" style="background:#f8fafc;padding:16px 20px;">
             <span style="font-weight:700;font-size:16px;display:flex;align-items:center;">
@@ -133,16 +173,21 @@
                 </thead>
                 <tbody style="color:#334155;">
                     @php $grandTotal = 0; @endphp
-                    @foreach($batch->consumptions as $consumption)
-                    @php $grandTotal += $consumption->total_cost; @endphp
+                    @foreach($order->ingredients as $consumption)
+                    @php 
+                        $qty = $consumption->consumed_qty ?? $consumption->required_qty;
+                        $unitCost = $consumption->ingredient->cost_price ?? 0;
+                        $totalCost = $qty * $unitCost;
+                        $grandTotal += $totalCost; 
+                    @endphp
                     <tr style="border-bottom:1px solid #f1f5f9;">
                         <td style="padding:14px 20px;font-weight:600;">
                             <i class="bi bi-box" style="color:#94a3b8;margin-right:6px;"></i>
-                            {{ $consumption->product ? $consumption->product->name : 'Unknown' }}
+                            {{ $consumption->ingredient ? $consumption->ingredient->name : 'Unknown' }}
                         </td>
-                        <td style="padding:14px 20px;text-align:center;">{{ number_format($consumption->qty, 2) }}</td>
-                        <td style="padding:14px 20px;text-align:right;">৳ {{ number_format($consumption->unit_cost, 2) }}</td>
-                        <td style="padding:14px 20px;text-align:right;font-weight:700;">৳ {{ number_format($consumption->total_cost, 2) }}</td>
+                        <td style="padding:14px 20px;text-align:center;">{{ number_format($qty, 2) }}</td>
+                        <td style="padding:14px 20px;text-align:right;">৳ {{ number_format($unitCost, 2) }}</td>
+                        <td style="padding:14px 20px;text-align:right;font-weight:700;">৳ {{ number_format($totalCost, 2) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -159,7 +204,7 @@
     <div class="card">
         <div class="card-body" style="padding:40px;text-align:center;color:#94a3b8;">
             <i class="bi bi-basket" style="font-size:36px;display:block;margin-bottom:10px;"></i>
-            <span style="font-size:14px;">No consumption records found for this batch.</span>
+            <span style="font-size:14px;">No consumption records found for this order.</span>
         </div>
     </div>
     @endif

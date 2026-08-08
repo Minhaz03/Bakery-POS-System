@@ -20,7 +20,12 @@ class BrandController extends Controller
     public function store(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:brands,name',
+            'name' => [
+                'required', 'string', 'max:255',
+                \Illuminate\Validation\Rule::unique('brands')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })
+            ],
             'description' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
@@ -46,7 +51,12 @@ class BrandController extends Controller
     public function update(Request $request, Brand $brand): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id,
+            'name' => [
+                'required', 'string', 'max:255',
+                \Illuminate\Validation\Rule::unique('brands')->where(function ($query) {
+                    return $query->where('tenant_id', auth()->user()->tenant_id);
+                })->ignore($brand->id)
+            ],
             'description' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);

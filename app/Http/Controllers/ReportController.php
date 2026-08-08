@@ -131,7 +131,8 @@ class ReportController extends Controller
         
         $sales = $salesQuery->get();
 
-        $totalSalesRevenue = $sales->sum('grand_total');
+        // Revenue should not include collected tax
+        $totalSalesRevenue = $sales->sum('grand_total') - $sales->sum('tax_amount');
         
         // Calculate Cost of Goods Sold (COGS) based on current product cost
         $totalCOGS = 0;

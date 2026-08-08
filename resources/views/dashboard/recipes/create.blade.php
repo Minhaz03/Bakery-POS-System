@@ -118,10 +118,10 @@
                     </div>
                 </div>
 
-                {{-- Timing & Yield --}}
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title"><i class="bi bi-hourglass-split"></i> Timing & Yield</span>
+                {{-- Timing & Expected Output --}}
+                <div class="card" style="border:1px solid #e2e8f0;box-shadow:none;margin-bottom:24px;">
+                    <div class="card-header" style="background:#f8fafc;padding:16px 20px;border-bottom:1px solid #e2e8f0;">
+                        <span class="card-title"><i class="bi bi-hourglass-split"></i> Timing & Expected Output</span>
                     </div>
                     <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;">
                         <div class="form-group">
@@ -132,12 +132,12 @@
                             <label class="form-label" for="bake_time">Bake Time</label>
                             <input type="text" name="bake_time" id="bake_time" class="form-control" value="{{ old('bake_time') }}" placeholder="e.g. 45 mins">
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="yield_qty">Yield Qty <span style="color:#ef4444;">*</span></label>
+                        <div>
+                            <label class="form-label" for="yield_qty">Expected Output Qty <span style="color:#ef4444;">*</span></label>
                             <input type="number" name="yield_qty" id="yield_qty" class="form-control" value="{{ old('yield_qty', 1) }}" min="1" required>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="yield_unit">Yield Unit</label>
+                        <div>
+                            <label class="form-label" for="yield_unit">Output Unit</label>
                             <input type="text" name="yield_unit" id="yield_unit" class="form-control" value="{{ old('yield_unit') }}" placeholder="loaves, pcs, kg">
                         </div>
                     </div>

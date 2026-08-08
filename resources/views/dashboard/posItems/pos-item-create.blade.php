@@ -149,6 +149,20 @@
         </div>
     </div>
 
+    @if ($errors->any())
+        <div style="background-color: #fef2f2; border: 1px solid #f87171; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <i class="bi bi-exclamation-triangle-fill" style="color: #ef4444; font-size: 18px;"></i>
+                <h4 style="margin: 0; color: #991b1b; font-size: 15px; font-weight: 700;">Please fix the following errors:</h4>
+            </div>
+            <ul style="margin: 0; padding-left: 24px; color: #b91c1c; font-size: 13.5px;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('dashboard.pos-items.store') }}" enctype="multipart/form-data">
         @csrf
 

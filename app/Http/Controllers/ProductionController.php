@@ -173,7 +173,8 @@ class ProductionController extends Controller
             ProductionBatch::create([
                 'production_order_id' => $order->id,
                 'batch_number'        => 'BATCH-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4)),
-                'produced_qty'        => $actualQty,
+                'qty'                 => $actualQty,
+                'scheduled_at'        => now(),
                 'manufacturing_date'  => $validated['manufacturing_date'] ?? today(),
                 'expiry_date'         => $validated['expiry_date'] ?? null,
             ]);
@@ -190,9 +191,96 @@ class ProductionController extends Controller
         return redirect()->route('dashboard.production')->with('success', 'Production order completed and stock updated.');
     }
 
-    /**
-     * Cancel a Production Order.
-     */
+    public function edit(ProductionOrder $order)
+    {
+        if ($order->status === 'completed') {
+            return redirect()->route('dashboard.production')->with('error', 'Cannot edit a completed order. If you need to make changes, delete it and create a new one.');
+        }
+        $recipes = \App\Models\Recipe::with('product')->where('is_active', true)->get();
+        return view('dashboard.production.edit', compact('order', 'recipes'));
+    }
+
+    public function update(Request $request, ProductionOrder $order)
+    {
+        if ($order->status === 'completed') {
+            return redirect()->route('dashboard.production')->with('error', 'Cannot edit a completed order.');
+        }
+
+        $validated = $request->validate([
+            'recipe_id' => 'required|exists:recipes,id',
+            'qty'       => 'required|numeric|min:0.01',
+            'scheduled_at' => 'required|date',
+        ]);
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $validated, $order) {
+            $order->update([
+                'recipe_id' => $validated['recipe_id'],
+                'planned_quantity' => $validated['qty'],
+                'planned_date' => $validated['scheduled_at'],
+            ]);
+
+            // Re-sync ingredients based on new qty
+            $recipe = \App\Models\Recipe::with('ingredients')->find($validated['recipe_id']);
+            $order->ingredients()->delete();
+            foreach ($recipe->ingredients as $recipeIngredient) {
+                \App\Models\ProductionOrderIngredient::create([
+                    'tenant_id' => auth()->user()->tenant_id ?? 1,
+                    'production_order_id' => $order->id,
+                    'ingredient_id' => $recipeIngredient->product_id,
+                    'required_qty' => ($recipeIngredient->quantity / $recipe->yield_qty) * $validated['qty'],
+                ]);
+            }
+        });
+
+        return redirect()->route('dashboard.production')->with('success', 'Production order updated successfully.');
+    }
+
+    public function destroy(ProductionOrder $order)
+    {
+        if ($order->status === 'completed') {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($order) {
+                // 1. Revert Output Product Stock
+                if ($order->recipe && $order->recipe->product && $order->actual_quantity > 0) {
+                    $order->recipe->product->decrement('stock_qty', $order->actual_quantity);
+                    \App\Models\StockLedger::create([
+                        'product_id' => $order->recipe->product_id,
+                        'type'       => 'Production Reversal (-)',
+                        'quantity'   => -$order->actual_quantity,
+                        'user_id'    => auth()->id(),
+                        'notes'      => "Reversed production order: {$order->reference_no}",
+                    ]);
+                }
+
+                // 2. Revert Consumed Ingredients Stock
+                foreach ($order->ingredients as $ingredient) {
+                    $consumed = $ingredient->consumed_qty ?? $ingredient->required_qty;
+                    $waste = $ingredient->waste_qty ?? 0;
+                    $totalDeducted = $consumed + $waste;
+                    if ($totalDeducted > 0 && $ingredient->ingredient) {
+                        $ingredient->ingredient->increment('stock_qty', $totalDeducted);
+                        \App\Models\StockLedger::create([
+                            'product_id' => $ingredient->ingredient_id,
+                            'type'       => 'Production Reversal (+)',
+                            'quantity'   => $totalDeducted,
+                            'user_id'    => auth()->id(),
+                            'notes'      => "Reversed consumption for order: {$order->reference_no}",
+                        ]);
+                    }
+                }
+                
+                // Delete batches
+                $order->batches()->delete();
+                $order->ingredients()->delete();
+                $order->delete();
+            });
+            return redirect()->route('dashboard.production')->with('success', 'Production order deleted and inventory reversed successfully.');
+        } else {
+            $order->ingredients()->delete();
+            $order->delete();
+            return redirect()->route('dashboard.production')->with('success', 'Production order deleted successfully.');
+        }
+    }
+
     public function cancel(ProductionOrder $order)
     {
         if ($order->status === 'completed') {

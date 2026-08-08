@@ -19,7 +19,7 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = User::with('roles')->orderBy('name');
+        $query = User::where('tenant_id', auth()->user()->tenant_id)->with('roles')->orderBy('name');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -53,9 +53,10 @@ class UserController extends Controller
         ]);
 
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'name'      => $validated['name'],
+            'email'     => $validated['email'],
+            'password'  => Hash::make($validated['password']),
+            'tenant_id' => auth()->user()->tenant_id,
         ]);
 
         if (!empty($validated['role'])) {
