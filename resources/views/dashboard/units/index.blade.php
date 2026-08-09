@@ -42,10 +42,10 @@
                                 @endif
                             </td>
                             <td style="padding:12px 20px;text-align:center;">
-                                <form method="POST" action="{{ route('dashboard.units.destroy', $unit) }}" onsubmit="return confirm('Are you sure you want to delete this unit?')" style="margin:0;display:inline;">
+                                <form method="POST" action="{{ route('dashboard.units.destroy', $unit) }}" class="delete-unit-form" style="margin:0;display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;padding:0;"><i class="bi bi-trash"></i></button>
+                                    <button type="button" class="delete-btn" style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;padding:0;"><i class="bi bi-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
@@ -125,4 +125,28 @@
 
     </div>
 
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Delete confirmation with SweetAlert
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const form = this.closest('.delete-unit-form');
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 </x-layouts.admin>
