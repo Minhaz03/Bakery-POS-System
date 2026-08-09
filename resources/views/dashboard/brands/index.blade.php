@@ -84,7 +84,7 @@
                             <th style="padding:12px 20px;width:56px;">Logo</th>
                             <th style="padding:12px 20px;">Brand Name</th>
                             <th style="padding:12px 20px;">Description</th>
-                            <th style="padding:12px 20px;text-align:center;width:60px;">Delete</th>
+                            <th style="padding:12px 20px;text-align:center;width:100px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody style="color:#334155;">
@@ -107,13 +107,20 @@
                                     style="padding:12px 20px;color:#64748b;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
                                     {{ $brand->description ?? '—' }}
                                 </td>
-                                <td style="padding:12px 20px;text-align:center;">
+                                <td
+                                    style="padding:12px 20px;text-align:center;display:flex;justify-content:center;align-items:center;gap:4px;">
+                                    <button type="button"
+                                        onclick="openEditModal({{ $brand->id }}, '{{ addslashes($brand->name) }}', '{{ addslashes($brand->description) }}')"
+                                        style="background:none;border:none;color:#3b82f6;font-size:16px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:background 0.1s;margin-right:4px;"
+                                        title="Edit" onmouseover="this.style.background='#eff6ff'"
+                                        onmouseout="this.style.background=''">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
                                     <form method="POST" action="{{ route('dashboard.brands.destroy', $brand) }}"
-                                        onsubmit="return confirm('Delete this brand?')"
-                                        style="margin:0;display:inline;">
+                                        class="delete-brand-form" style="margin:0;display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
+                                        <button type="button" class="delete-btn"
                                             style="background:none;border:none;color:#ef4444;font-size:16px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:background 0.1s;"
                                             title="Delete" onmouseover="this.style.background='#fef2f2'"
                                             onmouseout="this.style.background=''">
@@ -219,4 +226,90 @@
         }
     </script>
 
+    <!-- Edit Modal -->
+    <div id="editBrandModal"
+        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15, 23, 42, 0.6);z-index:9999;align-items:center;justify-content:center;">
+        <div
+            style="background:#fff;border-radius:12px;width:100%;max-width:500px;box-shadow:0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);">
+            <div
+                style="padding:16px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;">
+                <h3 style="margin:0;font-size:18px;font-weight:700;color:#0f172a;">Edit Brand</h3>
+                <button type="button" onclick="closeEditModal()"
+                    style="background:none;border:none;font-size:20px;color:#94a3b8;cursor:pointer;">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <form id="editBrandForm" method="POST" action="">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" for="edit_brand_name">Brand Name <span
+                                style="color:#ef4444;">*</span></label>
+                        <input type="text" name="name" id="edit_brand_name" class="form-control" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:24px;">
+                        <label class="form-label" for="edit_brand_desc">Description</label>
+                        <textarea name="description" id="edit_brand_desc" rows="3" class="form-control"></textarea>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:12px;">
+                        <button type="button" onclick="closeEditModal()" class="btn btn-light"
+                            style="background:#f1f5f9;color:#475569;border:none;padding:8px 16px;border-radius:6px;font-weight:600;cursor:pointer;">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="padding:8px 16px;">Update
+                            Brand</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Edit Modal logic
+        function openEditModal(id, name, description) {
+            const modal = document.getElementById('editBrandModal');
+            const form = document.getElementById('editBrandForm');
+            const nameInput = document.getElementById('edit_brand_name');
+            const descInput = document.getElementById('edit_brand_desc');
+
+            // Generate Route URL dynamically
+            let updateUrl = '{{ route('dashboard.brands.update', ':id') }}';
+            updateUrl = updateUrl.replace(':id', id);
+
+            // Set values
+            form.action = updateUrl;
+            nameInput.value = name;
+            descInput.value = description;
+
+            // Show modal
+            modal.style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editBrandModal').style.display = 'none';
+        }
+
+        // Delete confirmation with SweetAlert
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const form = this.closest('.delete-brand-form');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 </x-layouts.admin>
