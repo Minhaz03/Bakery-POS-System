@@ -1,6 +1,6 @@
 <x-layouts.admin title="POS Terminal">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="{{ asset('vendor/flatpickr/flatpickr.min.js') }}/dist/flatpickr.min.css">
+    <script src="{{ asset('vendor/flatpickr/flatpickr.min.js') }}"></script>
 
     <style>
         /* ── POS Custom Variables ── */

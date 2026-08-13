@@ -406,7 +406,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="{{ asset('vendor/chart.js/chart.umd.min.js') }}"></script>
     <script>
         const ctx = document.getElementById('salesChart');
         if (ctx) {

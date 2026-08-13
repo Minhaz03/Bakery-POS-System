@@ -1,8 +1,8 @@
 <x-layouts.admin title="Add New Product">
 
     {{-- FilePond CSS --}}
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/filepond/filepond.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css') }}" rel="stylesheet">
     <style>
         .filepond--root { font-family: 'Inter', sans-serif; margin-bottom: 0; }
         .filepond--panel-root { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; }
@@ -291,10 +291,10 @@
     </form>
 
     {{-- FilePond JS --}}
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.min.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.min.js"></script>
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.min.js"></script>
+    <script src="{{ asset('vendor/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js') }}"></script>
+    <script src="{{ asset('vendor/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js') }}"></script>
+    <script src="{{ asset('vendor/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}"></script>
+    <script src="{{ asset('vendor/filepond/filepond.min.js') }}"></script>
     <script>
         FilePond.registerPlugin(
             FilePondPluginImagePreview,
