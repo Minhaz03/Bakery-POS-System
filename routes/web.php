@@ -28,6 +28,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SupportTicketController;
 use App\Models\Plan;
 use Illuminate\Support\Facades\Route;
 
@@ -78,6 +79,16 @@ Route::middleware(['auth', 'verified', 'subscribed'])->prefix('dashboard')->name
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::post('notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::delete('notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+    // Support Tickets
+    Route::get('tickets', [SupportTicketController::class, 'index'])->name('tickets.index');
+    Route::get('tickets/create', [SupportTicketController::class, 'create'])->name('tickets.create');
+    Route::post('tickets', [SupportTicketController::class, 'store'])->name('tickets.store');
+    Route::get('tickets/{ticket}', [SupportTicketController::class, 'show'])->name('tickets.show');
+    Route::post('tickets/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('tickets.reply');
+    Route::patch('tickets/{ticket}/close', [SupportTicketController::class, 'close'])->name('tickets.close');
+    Route::patch('tickets/{ticket}/reopen', [SupportTicketController::class, 'reopen'])->name('tickets.reopen');
+    Route::get('tickets/{ticket}/messages/{message}/attachments/{index}', [SupportTicketController::class, 'downloadAttachment'])->name('tickets.downloadAttachment');
 
     // CRUD Resources with custom route names matching the UI sidebar
     Route::resource('products', ProductController::class)->parameters([
@@ -295,6 +306,16 @@ Route::prefix('superadmin')->name('saas.')->group(function () {
         Route::get('users', [App\Http\Controllers\Saas\UserController::class, 'index'])->name('users.index');
         Route::get('users/{user}', [App\Http\Controllers\Saas\UserController::class, 'show'])->name('users.show');
         Route::post('impersonate/{user}', [ImpersonationController::class, 'impersonate'])->name('impersonate');
+
+        // Support Tickets
+        Route::get('tickets', [App\Http\Controllers\Saas\SupportTicketController::class, 'index'])->name('tickets.index');
+        Route::get('tickets/{ticket}', [App\Http\Controllers\Saas\SupportTicketController::class, 'show'])->name('tickets.show');
+        Route::post('tickets/{ticket}/reply', [App\Http\Controllers\Saas\SupportTicketController::class, 'reply'])->name('tickets.reply');
+        Route::patch('tickets/{ticket}/status', [App\Http\Controllers\Saas\SupportTicketController::class, 'updateStatus'])->name('tickets.updateStatus');
+        Route::patch('tickets/{ticket}/priority', [App\Http\Controllers\Saas\SupportTicketController::class, 'updatePriority'])->name('tickets.updatePriority');
+        Route::patch('tickets/{ticket}/assign', [App\Http\Controllers\Saas\SupportTicketController::class, 'assign'])->name('tickets.assign');
+        Route::delete('tickets/{ticket}', [App\Http\Controllers\Saas\SupportTicketController::class, 'destroy'])->name('tickets.destroy');
+        Route::get('tickets/{ticket}/messages/{message}/attachments/{index}', [App\Http\Controllers\Saas\SupportTicketController::class, 'downloadAttachment'])->name('tickets.downloadAttachment');
     });
 });
 

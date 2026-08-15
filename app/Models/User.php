@@ -37,4 +37,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public function supportTickets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
 }

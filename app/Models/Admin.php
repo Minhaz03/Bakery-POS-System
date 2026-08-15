@@ -27,4 +27,9 @@ class Admin extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function assignedTickets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SupportTicket::class, 'assigned_to');
+    }
 }

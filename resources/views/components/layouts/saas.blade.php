@@ -774,6 +774,18 @@
                     <i class="bi bi-people nav-icon"></i> Users
                 </a>
             </div>
+            <div class="nav-item">
+                <a href="{{ route('saas.tickets.index') }}" class="nav-link {{ request()->routeIs('saas.tickets.*') ? 'active' : '' }}" style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="display:flex;align-items:center;gap:10px;">
+                        <i class="bi bi-headset nav-icon"></i> Support Tickets
+                    </span>
+                    @if(isset($pendingSaasTicketsCount) && $pendingSaasTicketsCount > 0)
+                        <span style="background:rgba(239,68,68,0.25);color:#fca5a5;font-size:11px;font-weight:700;padding:1px 6px;border-radius:10px;">
+                            {{ $pendingSaasTicketsCount }}
+                        </span>
+                    @endif
+                </a>
+            </div>
             <div class="nav-item" style="margin-top:20px;">
                 <div style="padding: 0 16px 8px 16px; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Platform</div>
             </div>
@@ -816,33 +828,72 @@
             </button>
             <div class="topbar-title">{{ $title ?? 'Dashboard' }}</div>
             <div class="topbar-actions">
-                <a href="#" class="btn-topbar"><i class="bi bi-bell"></i></a>
+                <!-- SaaS Notifications Dropdown -->
+                <div x-data="{ open: false }" style="position:relative;" @click.away="open = false">
+                    <button type="button" @click="open = !open" class="btn-topbar" style="position:relative;border:none;background:transparent;cursor:pointer;">
+                        <i class="bi bi-bell"></i>
+                        @if(isset($unreadSaasNotificationsCount) && $unreadSaasNotificationsCount > 0)
+                            <span style="position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ef4444;border-radius:50%;"></span>
+                        @endif
+                    </button>
+                    
+                    <div x-show="open" style="display:none;position:absolute;right:0;top:calc(100% + 8px);width:320px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);z-index:999;">
+                        <div style="padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-weight:700;color:#0f172a;font-size:13.5px;">Platform Alerts</span>
+                            @if(isset($unreadSaasNotificationsCount) && $unreadSaasNotificationsCount > 0)
+                                <span style="background:#fee2e2;color:#dc2626;font-size:11px;font-weight:700;padding:1px 6px;border-radius:10px;">
+                                    {{ $unreadSaasNotificationsCount }} new
+                                </span>
+                            @endif
+                        </div>
+                        
+                        <div style="max-height:300px;overflow-y:auto;">
+                            @if(isset($latestSaasNotifications) && count($latestSaasNotifications) > 0)
+                                @foreach($latestSaasNotifications as $notification)
+                                    <a href="{{ $notification->action_url ?? route('saas.tickets.index') }}" style="text-decoration:none;display:block;padding:12px 16px;border-bottom:1px solid #f1f5f9;transition:background 0.2s;{{ !$notification->is_read ? 'background:#f8fafc;' : '' }}" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='{{ !$notification->is_read ? '#f8fafc' : 'transparent' }}'">
+                                        <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px;display:flex;justify-content:space-between;">
+                                            <span>{{ $notification->title }}</span>
+                                            @if(!$notification->is_read)
+                                                <span style="width:6px;height:6px;background:#ef4444;border-radius:50%;display:inline-block;margin-top:5px;"></span>
+                                            @endif
+                                        </div>
+                                        <div style="font-size:12px;color:#64748b;line-height:1.4;margin-bottom:4px;">{{ $notification->message }}</div>
+                                        <div style="font-size:11px;color:#94a3b8;"><i class="bi bi-clock"></i> {{ $notification->created_at->diffForHumans() }}</div>
+                                    </a>
+                                @endforeach
+                            @else
+                                <div style="padding:24px 16px;text-align:center;color:#94a3b8;font-size:13px;">
+                                    <i class="bi bi-bell-slash" style="font-size:24px;display:block;margin-bottom:8px;color:#cbd5e1;"></i>
+                                    No alerts right now.
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Profile Dropdown -->
                 <div class="profile-dropdown-wrap" id="profileDropdownWrap">
                     <button type="button" class="btn-topbar" id="profileDropdownBtn"
                         onclick="toggleProfileDropdown()" style="gap:8px;">
                         <span
                             style="width:28px;height:28px;border-radius:50%;background:var(--primary);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            {{ strtoupper(substr(Auth::guard('admin')->user()?->name ?? 'A', 0, 1)) }}
                         </span>
                         <span
-                            style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ Auth::user()->name }}</span>
+                            style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ Auth::guard('admin')->user()?->name ?? 'Admin' }}</span>
                         <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                     </button>
                     <div class="profile-dropdown-menu" id="profileDropdownMenu">
                         <div class="profile-dropdown-header">
-                            <div class="profile-dropdown-name">{{ Auth::user()->name }}</div>
-                            <div class="profile-dropdown-email">{{ Auth::user()->email }}</div>
+                            <div class="profile-dropdown-name">{{ Auth::guard('admin')->user()?->name ?? 'Admin' }}</div>
+                            <div class="profile-dropdown-email">{{ Auth::guard('admin')->user()?->email ?? 'admin@saas.com' }}</div>
                         </div>
                         <div style="padding: 4px 0;">
-                            {{-- <a href="{{ route('profile.edit') }}" class="profile-dropdown-item">
-                                <i class="bi bi-person-circle" style="color:#6366f1;font-size:15px;"></i> My Profile
-                            </a> --}}
-                            <a href="{{ route('dashboard.settings.index') }}" class="profile-dropdown-item">
+                            <a href="{{ route('saas.settings.index') }}" class="profile-dropdown-item">
                                 <i class="bi bi-gear" style="color:#64748b;font-size:15px;"></i> Settings
                             </a>
                             <div class="profile-dropdown-divider"></div>
-                            <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+                            <form method="POST" action="{{ route('saas.logout') }}" style="margin:0;">
                                 @csrf
                                 <button type="submit" class="profile-dropdown-item danger">
                                     <i class="bi bi-box-arrow-right" style="font-size:15px;"></i> Logout

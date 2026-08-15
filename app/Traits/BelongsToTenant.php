@@ -13,6 +13,10 @@ trait BelongsToTenant
         static::addGlobalScope(new TenantScope());
 
         static::creating(function ($model) {
+            if (array_key_exists('tenant_id', $model->getAttributes()) && is_null($model->getAttributes()['tenant_id'])) {
+                return;
+            }
+
             if (!empty($model->tenant_id)) {
                 return;
             }

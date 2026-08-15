@@ -32,4 +32,9 @@ class Tenant extends Model
     {
         return $this->activeSubscription() !== null;
     }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
 }

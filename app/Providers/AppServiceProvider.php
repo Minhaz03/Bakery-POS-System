@@ -24,15 +24,45 @@ class AppServiceProvider extends ServiceProvider
         View::composer('components.layouts.admin', function ($view) {
             $unreadNotificationsCount = 0;
             $latestNotifications = collect([]);
+            $openTicketsCount = 0;
 
             if (auth()->check()) {
                 $unreadNotificationsCount = Notification::unread()->count();
                 $latestNotifications = Notification::orderBy('created_at', 'desc')->take(5)->get();
+                $openTicketsCount = \App\Models\SupportTicket::open()->count();
             }
 
             $view->with([
                 'unreadNotificationsCount' => $unreadNotificationsCount,
-                'latestNotifications' => $latestNotifications
+                'latestNotifications' => $latestNotifications,
+                'openTicketsCount' => $openTicketsCount,
+            ]);
+        });
+
+        View::composer('components.layouts.saas', function ($view) {
+            $pendingSaasTicketsCount = 0;
+            $unreadSaasNotificationsCount = 0;
+            $latestSaasNotifications = collect([]);
+
+            try {
+                $pendingSaasTicketsCount = \App\Models\SupportTicket::withoutGlobalScopes()->pendingAdmin()->count();
+                $unreadSaasNotificationsCount = Notification::withoutGlobalScopes()
+                    ->whereNull('tenant_id')
+                    ->where('is_read', false)
+                    ->count();
+                $latestSaasNotifications = Notification::withoutGlobalScopes()
+                    ->whereNull('tenant_id')
+                    ->orderBy('created_at', 'desc')
+                    ->take(5)
+                    ->get();
+            } catch (\Throwable $e) {
+                // Table might not exist yet during migration
+            }
+
+            $view->with([
+                'pendingSaasTicketsCount' => $pendingSaasTicketsCount,
+                'unreadSaasNotificationsCount' => $unreadSaasNotificationsCount,
+                'latestSaasNotifications' => $latestSaasNotifications,
             ]);
         });
     }

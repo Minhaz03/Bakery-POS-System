@@ -947,6 +947,20 @@
                     <i class="bi bi-credit-card nav-icon"></i> Billing & Plans
                 </a>
             </div>
+            <div class="nav-item">
+                <a href="{{ route('dashboard.tickets.index') }}"
+                    class="nav-link {{ request()->routeIs('dashboard.tickets*') ? 'active' : '' }}"
+                    style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="display:flex;align-items:center;gap:10px;">
+                        <i class="bi bi-headset nav-icon"></i> Support Tickets
+                    </span>
+                    @if(isset($openTicketsCount) && $openTicketsCount > 0)
+                        <span style="background:rgba(99,102,241,0.25);color:#a5b4fc;font-size:11px;font-weight:700;padding:1px 6px;border-radius:10px;">
+                            {{ $openTicketsCount }}
+                        </span>
+                    @endif
+                </a>
+            </div>
             @can('modules.manage')
                 <div class="nav-item">
                     <a href="{{ route('dashboard.modules.index') }}"
