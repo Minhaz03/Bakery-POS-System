@@ -99,27 +99,26 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px 12px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
         }
 
-        /* Premium Webkit Scrollbar for Sidebar Nav */
         .sidebar-nav::-webkit-scrollbar {
-            width: 6px !important;
-            height: 6px !important;
+            width: 4px;
+            height: 4px;
         }
 
         .sidebar-nav::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1) !important;
-            border-radius: 10px !important;
+            background: transparent;
         }
 
         .sidebar-nav::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #818cf8 0%, #4f46e5 100%) !important;
-            border-radius: 10px !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
 
         .sidebar-nav::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #6366f1 0%, #4338ca 100%) !important;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .nav-section-label {
