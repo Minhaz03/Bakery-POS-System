@@ -12,10 +12,12 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        Admin::create([
-            'name' => 'SaaS Super Admin',
-            'email' => 'admin@saas.com',
-            'password' => Hash::make('password'),
-        ]);
+        Admin::updateOrCreate(
+            ['email' => 'admin@saas.com'],
+            [
+                'name' => 'SaaS Super Admin',
+                'password' => Hash::make('password'),
+            ]
+        );
     }
 }
