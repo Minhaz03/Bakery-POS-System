@@ -725,7 +725,7 @@
                         <div class="perm-group" data-group-name="{{ strtolower($group) }}">
                             <div class="perm-group-title">
                                 <i class="bi bi-folder2-open"></i>
-                                {{ ucfirst($group) }}
+                                {{ $groupLabels[$group] ?? ucfirst($group) }}
                                 <span class="group-toggle" onclick="toggleGroup(this, '{{ $group }}')">Select All</span>
                             </div>
                             <div class="perm-chips-grid">
@@ -734,7 +734,7 @@
                                         <input type="checkbox" name="permissions[]" value="{{ $perm->name }}" onchange="handleCheckboxChange(this)">
                                         <i class="bi bi-{{ str_contains($perm->name, 'view') ? 'eye' : (str_contains($perm->name, 'create') ? 'plus-circle' : (str_contains($perm->name, 'delete') ? 'trash' : (str_contains($perm->name, 'manage') ? 'sliders' : 'pencil'))) }}"
                                             style="font-size:11px;"></i>
-                                        <span>{{ explode('.', $perm->name)[1] ?? $perm->name }}</span>
+                                        <span>{{ $perm->name }}</span>
                                     </label>
                                 @endforeach
                             </div>

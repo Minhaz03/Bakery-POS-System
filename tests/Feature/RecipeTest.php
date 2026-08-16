@@ -24,6 +24,7 @@ beforeEach(function () {
 
 test('authenticated user can view recipes index', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     Recipe::create([
         'name' => 'Fudge Brownie',
@@ -43,6 +44,7 @@ test('authenticated user can view recipes index', function () {
 
 test('authenticated user can view recipe create page', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     $response = $this->actingAs($user)->get(route('dashboard.recipes.create'));
 
@@ -52,6 +54,7 @@ test('authenticated user can view recipe create page', function () {
 
 test('user can store a recipe with ingredients', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $product = Product::first();
 
     $response = $this->actingAs($user)->post(route('dashboard.recipes.store'), [
@@ -97,6 +100,7 @@ test('user can store a recipe with ingredients', function () {
 
 test('user can view specific recipe details', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     $recipe = Recipe::create([
         'name' => 'Strawberry Jam Cake',
@@ -115,6 +119,7 @@ test('user can view specific recipe details', function () {
 
 test('user can update a recipe and ingredients', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     $recipe = Recipe::create([
         'name' => 'Gluten Free Sourdough',
@@ -166,6 +171,7 @@ test('user can update a recipe and ingredients', function () {
 
 test('user can delete a recipe', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     $recipe = Recipe::create([
         'name' => 'Garlic Bread',

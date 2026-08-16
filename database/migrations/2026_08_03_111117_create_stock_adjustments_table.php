@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('reason')->nullable();
             $table->string('status')->default('completed'); // completed, pending, etc.
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreignId('tenant_id')->nullable()->default(1)->constrained('tenants')->onDelete('cascade');
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

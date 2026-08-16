@@ -45,6 +45,16 @@ class UserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $tenant = auth()->user()->tenant;
+        $activeSubscription = $tenant ? $tenant->activeSubscription() : null;
+        $limit = $activeSubscription ? $activeSubscription->plan->limit_users : 0;
+        $currentUsersCount = User::where('tenant_id', auth()->user()->tenant_id)->count();
+
+        if ($currentUsersCount >= $limit) {
+            return redirect()->back()
+                ->with('error', "Your plan limit has been reached! You can only have up to {$limit} users. Please upgrade your plan.");
+        }
+
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email',

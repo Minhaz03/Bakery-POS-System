@@ -6,7 +6,7 @@ it('shows the welcome page for guest users', function () {
     $response = $this->get('/');
 
     $response->assertStatus(200);
-    $response->assertSee('POS System');
+    $response->assertSee('BakeryPOS');
 });
 
 it('redirects authenticated users to the dashboard', function () {

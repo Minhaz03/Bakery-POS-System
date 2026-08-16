@@ -21,6 +21,7 @@ beforeEach(function () {
 
 test('authenticated user can perform unit operations', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     // 1. Create Unit
     $response = $this->actingAs($user)->post(route('dashboard.units.store'), [
@@ -50,6 +51,7 @@ test('authenticated user can perform unit operations', function () {
 
 test('authenticated user can perform brand operations', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $logoFile = UploadedFile::fake()->image('brand_logo.png');
 
     // 1. Create Brand with Logo
@@ -73,6 +75,7 @@ test('authenticated user can perform brand operations', function () {
 
 test('authenticated user can perform category CRUD', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $imageFile = UploadedFile::fake()->image('cat_image.jpg');
 
     // 1. Create Category
@@ -108,6 +111,7 @@ test('authenticated user can perform category CRUD', function () {
 
 test('authenticated user can perform supplier CRUD', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     // 1. Create Supplier
     $response = $this->actingAs($user)->post(route('dashboard.suppliers.store'), [
@@ -157,6 +161,7 @@ test('authenticated user can perform supplier CRUD', function () {
 
 test('authenticated user can perform customer CRUD and Walk-in deletion protection', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     // Seed Walk-in Customer
     $walkin = Customer::create([
@@ -206,6 +211,7 @@ test('authenticated user can perform customer CRUD and Walk-in deletion protecti
 
 test('authenticated user can perform product CRUD', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
 
     // Seed dependencies
     $category = Category::create(['name' => 'Cakes']);

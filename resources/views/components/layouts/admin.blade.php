@@ -800,143 +800,186 @@
                 </a>
             </div>
 
-            <div class="nav-section-label">Inventory</div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.products') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.products') ? 'active' : '' }}"><i
-                        class="bi bi-box-seam nav-icon"></i> Products</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.categories') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.categories') ? 'active' : '' }}"><i
-                        class="bi bi-tags nav-icon"></i> Categories</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.units') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.units') ? 'active' : '' }}"><i
-                        class="bi bi-rulers nav-icon"></i> Units</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.brands') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.brands') ? 'active' : '' }}"><i
-                        class="bi bi-star nav-icon"></i> Brands</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.stock-ledger') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.stock-ledger') ? 'active' : '' }}"><i
-                        class="bi bi-layers nav-icon"></i> Stock Ledger</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.suppliers') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.suppliers') ? 'active' : '' }}"><i
-                        class="bi bi-people nav-icon"></i> Suppliers</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.suppliers.payments.index') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.suppliers.payments.index') ? 'active' : '' }}"><i
-                        class="bi bi-cash-stack nav-icon"></i> Supplier Payments</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.purchases') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.purchases*') ? 'active' : '' }}"><i
-                        class="bi bi-receipt nav-icon"></i> Purchases</a>
-            </div>
-
-            <div class="nav-section-label">POS & Sales</div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.pos-terminal') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.pos-terminal') ? 'active' : '' }}"><i
-                        class="bi bi-calculator nav-icon"></i> POS Terminal</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.sales') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.sales*') ? 'active' : '' }}"><i
-                        class="bi bi-graph-up nav-icon"></i> Sales</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.customers') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.customers') ? 'active' : '' }}"><i
-                        class="bi bi-person-badge nav-icon"></i> Customers</a>
-            </div>
-
-            <div class="nav-section-label">Expenses</div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.expenses.index') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.expenses.*') ? 'active' : '' }}"><i
-                        class="bi bi-receipt-cutoff nav-icon"></i> All Expenses</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.expense-categories.index') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.expense-categories.*') ? 'active' : '' }}"><i
-                        class="bi bi-tags nav-icon"></i> Expense Categories</a>
-            </div>
-
-            <div class="nav-section-label">Bakery</div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.recipes') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.recipes') ? 'active' : '' }}"><i
-                        class="bi bi-egg-fried nav-icon"></i> Recipes</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.production') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.production') ? 'active' : '' }}"><i
-                        class="bi bi-clipboard-check nav-icon"></i> Production</a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.custom-orders') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.custom-orders') ? 'active' : '' }}"><i
-                        class="bi bi-calendar-event nav-icon"></i> Custom Orders</a>
-            </div>
-
-            <div class="nav-section-label">Reports</div>
-            <div class="nav-item" x-data="{ open: {{ request()->routeIs('dashboard.reports.*') ? 'true' : 'false' }} }">
-                <button type="button" @click="open = !open"
-                    class="nav-link {{ request()->routeIs('dashboard.reports.*') ? 'active' : '' }}"
-                    style="width: 100%; border: none; background: none; text-align: left; display: flex; align-items: center; cursor: pointer; padding: 9px 12px; transition: all 0.15s;">
-                    <i class="bi bi-file-earmark-text nav-icon"></i>
-                    <span>Reports</span>
-                    <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"
-                        style="font-size: 10px; margin-left: auto;"></i>
-                </button>
-                <div x-show="open"
-                    style="padding-left: 12px; display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
-                    <a href="{{ route('dashboard.reports.index') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.index') ? 'active' : '' }}"
-                        style="font-size: 13px; padding: 7px 12px;">
-                        <i class="bi bi-grid nav-icon" style="font-size:12px;"></i> All Reports
-                    </a>
-                    <a href="{{ route('dashboard.reports.sales') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.sales') ? 'active' : '' }}"
-                        style="font-size: 13px; padding: 7px 12px;">
-                        <i class="bi bi-graph-up nav-icon" style="font-size:12px;"></i> Sales Report
-                    </a>
-                    <a href="{{ route('dashboard.reports.purchases') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.purchases') ? 'active' : '' }}"
-                        style="font-size: 13px; padding: 7px 12px;">
-                        <i class="bi bi-cart nav-icon" style="font-size:12px;"></i> Purchases
-                    </a>
-                    <a href="{{ route('dashboard.reports.stock') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.stock') ? 'active' : '' }}"
-                        style="font-size: 13px; padding: 7px 12px;">
-                        <i class="bi bi-box nav-icon" style="font-size:12px;"></i> Stock Report
-                    </a>
-                    <a href="{{ route('dashboard.reports.production') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.production') ? 'active' : '' }}"
-                        style="font-size: 13px; padding: 7px 12px;">
-                        <i class="bi bi-clipboard-check nav-icon" style="font-size:12px;"></i> Production
-                    </a>
-                    <a href="{{ route('dashboard.reports.profit-loss') }}"
-                        class="nav-link {{ request()->routeIs('dashboard.reports.profit-loss') ? 'active' : '' }}"
-                        style="font-size: 13px; padding: 7px 12px;">
-                        <i class="bi bi-cash-coin nav-icon" style="font-size:12px;"></i> Profit & Loss
-                    </a>
+            @canany(['products.view', 'categories.manage', 'units.manage', 'brands.manage', 'stock.view', 'suppliers.manage', 'purchases.view'])
+                <div class="nav-section-label">Inventory</div>
+            @endcanany
+            @can('products.view')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.products') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.products') ? 'active' : '' }}"><i
+                            class="bi bi-box-seam nav-icon"></i> Products</a>
                 </div>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('dashboard.analytics') }}"
-                    class="nav-link {{ request()->routeIs('dashboard.analytics') ? 'active' : '' }}"><i
-                        class="bi bi-bar-chart-line nav-icon"></i> Analytics</a>
-            </div>
+            @endcan
+            @can('categories.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.categories') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.categories') ? 'active' : '' }}"><i
+                            class="bi bi-tags nav-icon"></i> Categories</a>
+                </div>
+            @endcan
+            @can('units.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.units') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.units') ? 'active' : '' }}"><i
+                            class="bi bi-rulers nav-icon"></i> Units</a>
+                </div>
+            @endcan
+            @can('brands.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.brands') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.brands') ? 'active' : '' }}"><i
+                            class="bi bi-star nav-icon"></i> Brands</a>
+                </div>
+            @endcan
+            @can('stock.view')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.stock-ledger') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.stock-ledger') ? 'active' : '' }}"><i
+                            class="bi bi-layers nav-icon"></i> Stock Ledger</a>
+                </div>
+            @endcan
+            @can('suppliers.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.suppliers') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.suppliers') ? 'active' : '' }}"><i
+                            class="bi bi-people nav-icon"></i> Suppliers</a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.suppliers.payments.index') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.suppliers.payments.index') ? 'active' : '' }}"><i
+                            class="bi bi-cash-stack nav-icon"></i> Supplier Payments</a>
+                </div>
+            @endcan
+            @can('purchases.view')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.purchases') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.purchases*') ? 'active' : '' }}"><i
+                            class="bi bi-receipt nav-icon"></i> Purchases</a>
+                </div>
+            @endcan
+
+            @canany(['pos.access', 'sales.view', 'customers.manage'])
+                <div class="nav-section-label">POS & Sales</div>
+            @endcanany
+            @can('pos.access')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.pos-terminal') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.pos-terminal') ? 'active' : '' }}"><i
+                            class="bi bi-calculator nav-icon"></i> POS Terminal</a>
+                </div>
+            @endcan
+            @can('sales.view')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.sales') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.sales*') ? 'active' : '' }}"><i
+                            class="bi bi-graph-up nav-icon"></i> Sales</a>
+                </div>
+            @endcan
+            @can('customers.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.customers') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.customers') ? 'active' : '' }}"><i
+                            class="bi bi-person-badge nav-icon"></i> Customers</a>
+                </div>
+            @endcan
+
+            @canany(['expenses.view', 'expenses.manage'])
+                <div class="nav-section-label">Expenses</div>
+            @endcanany
+            @can('expenses.view')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.expenses.index') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.expenses.*') ? 'active' : '' }}"><i
+                            class="bi bi-receipt-cutoff nav-icon"></i> All Expenses</a>
+                </div>
+            @endcan
+            @can('expenses.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.expense-categories.index') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.expense-categories.*') ? 'active' : '' }}"><i
+                            class="bi bi-tags nav-icon"></i> Expense Categories</a>
+                </div>
+            @endcan
+
+            @canany(['recipes.manage', 'production.view', 'custom.orders.manage'])
+                <div class="nav-section-label">Bakery</div>
+            @endcanany
+            @can('recipes.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.recipes') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.recipes') ? 'active' : '' }}"><i
+                            class="bi bi-egg-fried nav-icon"></i> Recipes</a>
+                </div>
+            @endcan
+            @can('production.view')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.production') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.production') ? 'active' : '' }}"><i
+                            class="bi bi-clipboard-check nav-icon"></i> Production</a>
+                </div>
+            @endcan
+            @can('custom.orders.manage')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.custom-orders') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.custom-orders') ? 'active' : '' }}"><i
+                            class="bi bi-calendar-event nav-icon"></i> Custom Orders</a>
+                </div>
+            @endcan
+
+            @can('reports.view')
+                <div class="nav-section-label">Reports</div>
+                <div class="nav-item" x-data="{ open: {{ request()->routeIs('dashboard.reports.*') ? 'true' : 'false' }} }">
+                    <button type="button" @click="open = !open"
+                        class="nav-link {{ request()->routeIs('dashboard.reports.*') ? 'active' : '' }}"
+                        style="width: 100%; border: none; background: none; text-align: left; display: flex; align-items: center; cursor: pointer; padding: 9px 12px; transition: all 0.15s;">
+                        <i class="bi bi-file-earmark-text nav-icon"></i>
+                        <span>Reports</span>
+                        <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"
+                            style="font-size: 10px; margin-left: auto;"></i>
+                    </button>
+                    <div x-show="open"
+                        style="padding-left: 12px; display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
+                        <a href="{{ route('dashboard.reports.index') }}"
+                            class="nav-link {{ request()->routeIs('dashboard.reports.index') ? 'active' : '' }}"
+                            style="font-size: 13px; padding: 7px 12px;">
+                            <i class="bi bi-grid nav-icon" style="font-size:12px;"></i> All Reports
+                        </a>
+                        <a href="{{ route('dashboard.reports.sales') }}"
+                            class="nav-link {{ request()->routeIs('dashboard.reports.sales') ? 'active' : '' }}"
+                            style="font-size: 13px; padding: 7px 12px;">
+                            <i class="bi bi-graph-up nav-icon" style="font-size:12px;"></i> Sales Report
+                        </a>
+                        <a href="{{ route('dashboard.reports.purchases') }}"
+                            class="nav-link {{ request()->routeIs('dashboard.reports.purchases') ? 'active' : '' }}"
+                            style="font-size: 13px; padding: 7px 12px;">
+                            <i class="bi bi-cart nav-icon" style="font-size:12px;"></i> Purchases
+                        </a>
+                        <a href="{{ route('dashboard.reports.stock') }}"
+                            class="nav-link {{ request()->routeIs('dashboard.reports.stock') ? 'active' : '' }}"
+                            style="font-size: 13px; padding: 7px 12px;">
+                            <i class="bi bi-box nav-icon" style="font-size:12px;"></i> Stock Report
+                        </a>
+                        <a href="{{ route('dashboard.reports.production') }}"
+                            class="nav-link {{ request()->routeIs('dashboard.reports.production') ? 'active' : '' }}"
+                            style="font-size: 13px; padding: 7px 12px;">
+                            <i class="bi bi-clipboard-check nav-icon" style="font-size:12px;"></i> Production
+                        </a>
+                        <a href="{{ route('dashboard.reports.profit-loss') }}"
+                            class="nav-link {{ request()->routeIs('dashboard.reports.profit-loss') ? 'active' : '' }}"
+                            style="font-size: 13px; padding: 7px 12px;">
+                            <i class="bi bi-cash-coin nav-icon" style="font-size:12px;"></i> Profit & Loss
+                        </a>
+                    </div>
+                </div>
+            @endcan
+
+            @can('analytics.view')
+                <div class="nav-item">
+                    <a href="{{ route('dashboard.analytics') }}"
+                        class="nav-link {{ request()->routeIs('dashboard.analytics') ? 'active' : '' }}"><i
+                            class="bi bi-bar-chart-line nav-icon"></i> Analytics</a>
+                </div>
+            @endcan
 
             <div class="nav-section-label">Administration</div>
             @can('users.view')

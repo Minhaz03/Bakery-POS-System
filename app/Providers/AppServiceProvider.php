@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use App\Models\Notification;
 
@@ -21,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Implicitly grant 'Super Admin' role all permissions
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('Super Admin') ? true : null;
+        });
         View::composer('components.layouts.admin', function ($view) {
             $unreadNotificationsCount = 0;
             $latestNotifications = collect([]);

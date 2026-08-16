@@ -31,19 +31,22 @@ class RolesAndPermissionsSeeder extends Seeder
             'categories.manage', 'units.manage', 'taxes.manage', 'brands.manage',
 
             // Stock Management
-            'stock.view', 'stock.adjust', 'stock.alerts',
+            'stock.view', 'stock.adjust', 'stock.alerts', 'stock.export',
 
             // Suppliers & Purchases
-            'suppliers.manage', 'purchases.manage', 'purchases.create', 'purchases.view',
+            'suppliers.manage', 'suppliers.payments', 'purchases.manage', 'purchases.create', 'purchases.view',
 
             // POS & Sales
-            'pos.access', 'pos.sell', 'customers.manage', 'sales.view', 'sales.return',
+            'pos.access', 'pos.sell', 'customers.manage', 'sales.view', 'sales.edit', 'sales.return',
 
-            // Modules & Settings (Super Admin only)
-            'settings.manage', 'settings.view', 'modules.manage', 'activity.logs',
+            // Expenses
+            'expenses.view', 'expenses.create', 'expenses.edit', 'expenses.delete', 'expenses.manage',
 
-            // Reports
-            'reports.view', 'reports.export',
+            // Reports & Analytics
+            'reports.view', 'reports.export', 'analytics.view',
+
+            // Modules & Settings
+            'settings.manage', 'settings.view', 'modules.manage', 'activity.logs', 'tickets.view',
 
             // Warehouse Module (Optional)
             'warehouse.view', 'warehouse.manage', 'warehouse.transfer',
@@ -51,7 +54,7 @@ class RolesAndPermissionsSeeder extends Seeder
             // Branch Module (Optional)
             'branch.view', 'branch.manage',
 
-            // Bakery Module (Optional)
+            // Bakery / Production Module
             'recipes.manage', 'production.manage', 'production.create', 'production.view',
             'supply.orders.manage', 'custom.orders.manage',
         ];
@@ -72,10 +75,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'users.view', 'users.create', 'users.edit',
             'products.view', 'products.create', 'products.edit', 'products.delete',
             'categories.manage', 'units.manage', 'taxes.manage', 'brands.manage',
-            'stock.view', 'stock.adjust', 'stock.alerts',
-            'suppliers.manage', 'purchases.manage', 'purchases.create', 'purchases.view',
-            'pos.access', 'pos.sell', 'customers.manage', 'sales.view', 'sales.return',
-            'settings.manage', 'activity.logs', 'reports.view', 'reports.export',
+            'stock.view', 'stock.adjust', 'stock.alerts', 'stock.export',
+            'suppliers.manage', 'suppliers.payments', 'purchases.manage', 'purchases.create', 'purchases.view',
+            'pos.access', 'pos.sell', 'customers.manage', 'sales.view', 'sales.edit', 'sales.return',
+            'expenses.view', 'expenses.create', 'expenses.edit', 'expenses.delete', 'expenses.manage',
+            'reports.view', 'reports.export', 'analytics.view',
+            'settings.view', 'settings.manage', 'activity.logs', 'tickets.view',
             'warehouse.view', 'warehouse.transfer',
             'branch.view',
             'recipes.manage', 'production.view', 'production.create', 'production.manage',
@@ -87,10 +92,11 @@ class RolesAndPermissionsSeeder extends Seeder
         $managerRole->syncPermissions([
             'products.view', 'products.create', 'products.edit',
             'categories.manage', 'units.manage', 'brands.manage',
-            'stock.view', 'stock.adjust', 'stock.alerts',
-            'suppliers.manage', 'purchases.view', 'purchases.create',
-            'pos.access', 'pos.sell', 'customers.manage', 'sales.view',
-            'reports.view',
+            'stock.view', 'stock.adjust', 'stock.alerts', 'stock.export',
+            'suppliers.manage', 'suppliers.payments', 'purchases.view', 'purchases.create',
+            'pos.access', 'pos.sell', 'customers.manage', 'sales.view', 'sales.edit',
+            'expenses.view', 'expenses.create', 'expenses.edit',
+            'reports.view', 'analytics.view',
             'warehouse.view', 'warehouse.transfer',
             'recipes.manage', 'production.view', 'production.create',
             'supply.orders.manage', 'custom.orders.manage',

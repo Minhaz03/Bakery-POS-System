@@ -19,12 +19,41 @@ class RoleController extends Controller
         $roles       = Role::with('permissions')->orderBy('name')->get();
         $permissions = Permission::orderBy('name')->get();
 
+        $groupLabels = [
+            'users' => 'User Management',
+            'roles' => 'Roles & Permissions',
+            'products' => 'Products & Catalog',
+            'categories' => 'Product Categories',
+            'units' => 'Units of Measurement',
+            'brands' => 'Brands',
+            'taxes' => 'Tax Settings',
+            'stock' => 'Stock & Inventory Ledger',
+            'suppliers' => 'Suppliers & Vendor Payments',
+            'purchases' => 'Purchase Orders',
+            'pos' => 'POS Terminal',
+            'sales' => 'Sales & Orders',
+            'customers' => 'Customers',
+            'expenses' => 'Expenses & Expense Categories',
+            'reports' => 'Reports',
+            'analytics' => 'Analytics & Insights',
+            'settings' => 'System Settings',
+            'modules' => 'Module Management',
+            'recipes' => 'Recipes & Formulas',
+            'production' => 'Production Orders',
+            'supply' => 'Supply Orders',
+            'custom' => 'Custom Orders',
+            'warehouse' => 'Warehouse Management',
+            'branch' => 'Branch Management',
+            'activity' => 'Activity Logs',
+            'tickets' => 'Support Tickets',
+        ];
+
         // Group permissions by prefix (e.g., "users.view" -> "users")
         $groupedPermissions = $permissions->groupBy(function ($p) {
             return explode('.', $p->name)[0];
         });
 
-        return view('admin.roles.index', compact('roles', 'permissions', 'groupedPermissions'));
+        return view('admin.roles.index', compact('roles', 'permissions', 'groupedPermissions', 'groupLabels'));
     }
 
     /**

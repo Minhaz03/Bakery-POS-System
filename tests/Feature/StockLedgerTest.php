@@ -23,13 +23,14 @@ beforeEach(function () {
 
 test('user can view stock ledger page and seeded entries', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     
     // Seed some movements
     $product = Product::first();
     StockLedger::create([
         'product_id' => $product->id,
         'type' => 'Production (+)',
-        'qty' => 30,
+        'quantity' => 30,
         'user_id' => $user->id,
         'notes' => 'Test production notes'
     ]);
@@ -45,6 +46,7 @@ test('user can view stock ledger page and seeded entries', function () {
 
 test('user can perform a stock adjustment', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $product = Product::first();
     $initialStock = (float) $product->stock_qty;
 
@@ -66,12 +68,13 @@ test('user can perform a stock adjustment', function () {
     $ledger = StockLedger::latest()->first();
     expect($ledger->product_id)->toEqual($product->id);
     expect($ledger->type)->toEqual('Adjustment (+)');
-    expect((float) $ledger->qty)->toEqual(15.0);
+    expect((float) $ledger->quantity)->toEqual(15.0);
     expect($ledger->notes)->toEqual('Bulk adjustment test');
 });
 
 test('user can export stock ledger to excel csv', function () {
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     
     $response = $this->actingAs($user)->get(route('dashboard.stock-ledger.export'));
 

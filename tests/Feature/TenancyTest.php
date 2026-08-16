@@ -7,6 +7,11 @@ use App\Models\Category;
 use App\Models\Unit;
 use App\Models\Brand;
 use App\Models\Tax;
+use Database\Seeders\RolesAndPermissionsSeeder;
+
+beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+});
 
 test('data is automatically scoped by tenant and users cannot access other tenant data', function () {
     // 1. Create two tenants
@@ -15,7 +20,9 @@ test('data is automatically scoped by tenant and users cannot access other tenan
 
     // 2. Create users for both tenants
     $user1 = User::factory()->create(['tenant_id' => $tenant1->id]);
+    $user1->assignRole('Super Admin');
     $user2 = User::factory()->create(['tenant_id' => $tenant2->id]);
+    $user2->assignRole('Super Admin');
 
     // 3. Create sharing infrastructure dependencies
     session(['tenant_id' => $tenant1->id]);

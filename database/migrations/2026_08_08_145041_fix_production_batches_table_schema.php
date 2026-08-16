@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::table('production_batches', function (Blueprint $table) {
             $table->dropForeign(['recipe_id']);
+            try {
+                $table->dropUnique('production_batches_batch_code_unique');
+            } catch (\Throwable $e) {}
             $table->dropColumn(['recipe_id', 'batch_code']);
 
             $table->unsignedBigInteger('production_order_id')->nullable()->after('id');

@@ -32,4 +32,21 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
+        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException|\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, Request $request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'message' => 'You do not have sufficient permissions to perform this action.',
+                ], 403);
+            }
+
+            if (!$request->isMethod('GET')) {
+                return redirect()->back()->with('error', 'You do not have sufficient permissions to perform this action.');
+            }
+
+            return response()->view('errors.403', [
+                'exception' => $e,
+                'message' => 'You do not have sufficient permissions to perform this action.'
+            ], 403);
+        });
     })->create();
